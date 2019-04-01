@@ -13,6 +13,7 @@ export default class Fish extends mixin(Model, {
     placeUntil: Model.attribute('placeUntil'),
     namedBy: Model.hasOne('lastUserNaming'),
     placedBy: Model.hasOne('lastUserPlacement'),
+    round: Model.hasOne('round'),
 }) {
     apiEndpoint() {
         return '/catch-the-fish/' + (this.exists ? 'fishes/' + this.data.id : 'rounds/' + this.data.attributes.round_id + '/fishes');

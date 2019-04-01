@@ -47,7 +47,7 @@ class ForumRelationship implements ExtenderInterface
     public function includes(WillGetData $event)
     {
         if ($event->isController(ShowForumController::class) && app(SettingsRepositoryInterface::class)->get('catch-the-fish.alertRound', true)) {
-            $event->addInclude('catchTheFishActiveRounds');
+            $event->addInclude('catchTheFishActiveRounds.ranking');
         }
     }
 
@@ -60,6 +60,7 @@ class ForumRelationship implements ExtenderInterface
             $settings = app(SettingsRepositoryInterface::class);
 
             $event->attributes['catchTheFishCanModerate'] = $event->actor->can('catchthefish.moderate');
+            $event->attributes['catchTheFishCanSeeRankingsPage'] = $event->actor->can('catchthefish.list-rankings');
             $event->attributes['catchTheFishAnimateFlip'] = (bool)$settings->get('catch-the-fish.animateFlip', true);
         }
     }

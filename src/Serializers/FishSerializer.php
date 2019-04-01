@@ -46,6 +46,11 @@ class FishSerializer extends AbstractSerializer
         ];
     }
 
+    public function round($fish)
+    {
+        return $this->buildRelationship($fish, RoundSerializer::class, 'round');
+    }
+
     public function lastUserPlacement($fish)
     {
         return $this->buildRelationship($fish, UserSerializer::class, 'lastUserPlacement');

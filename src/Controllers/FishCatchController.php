@@ -15,6 +15,10 @@ class FishCatchController extends AbstractShowController
 {
     public $serializer = FishSerializer::class;
 
+    public $include = [
+        'round.ranking',
+    ];
+
     protected $fishes;
     protected $placement;
 

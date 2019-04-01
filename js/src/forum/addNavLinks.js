@@ -7,6 +7,14 @@ const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.nav.';
 
 export default function () {
     extend(IndexPage.prototype, 'navItems', function (items) {
+        if (app.forum.catchTheFishCanSeeRankingsPage()) {
+            items.add('catchthefish-rankings', LinkButton.component({
+                icon: 'fas fa-fish',
+                children: app.translator.trans(translationPrefix + 'rankings'),
+                href: app.route('catchTheFishRankings'),
+            }));
+        }
+
         if (app.forum.catchTheFishCanModerate()) {
             items.add('catchthefish-settings', LinkButton.component({
                 icon: 'fas fa-fish',

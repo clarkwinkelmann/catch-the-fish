@@ -106,7 +106,9 @@ export default class CaughtFishModal extends Modal {
                     username(placedBy),
                 ]),
             ]) : null,
-            m('p', app.translator.trans(translationPrefix + 'congratulation')),
+            m('p', app.translator.trans(translationPrefix + 'congratulation', {
+                catch_count: fish.round().ranking().catch_count(),
+            })),
             fish.canName() ? m('.Form-group', [
                 m('p', app.translator.trans(translationPrefix + 'name-help')),
                 m('label', app.translator.trans(translationPrefix + 'name')),
@@ -138,5 +140,11 @@ export default class CaughtFishModal extends Modal {
                 },
             })) : null,
         ]);
+    }
+
+    onsubmit() {
+        // Because the modal has its own form, pressing enter will submit here
+        // In this case we apply the same feature as the first button
+        this.saveNameAndPlacement();
     }
 }

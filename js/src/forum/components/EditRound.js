@@ -30,7 +30,12 @@ export default class EditRound extends Component {
     }
 
     view() {
-        return m('form', [
+        return m('form', {
+            onsubmit: event => {
+                event.preventDefault();
+                this.saveRecord();
+            },
+        }, [
             m('.Form-group', [
                 m('label', app.translator.trans(translationPrefix + 'name')),
                 m('input.FormControl', {

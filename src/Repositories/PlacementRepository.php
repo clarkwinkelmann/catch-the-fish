@@ -4,6 +4,7 @@ namespace ClarkWinkelmann\CatchTheFish\Repositories;
 
 use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Fish;
+use ClarkWinkelmann\CatchTheFish\Ranking;
 use ClarkWinkelmann\CatchTheFish\Validators\FishValidator;
 use Flarum\Foundation\ValidationException;
 use Flarum\Locale\Translator;
@@ -78,7 +79,21 @@ class PlacementRepository
 
         $fish->save();
 
-        // TODO: count catches
+        /**
+         * @var $ranking Ranking
+         */
+        $ranking = $fish->round->userRanking($actor);
+
+        if ($ranking) {
+            $ranking->catch_count += 1;
+            $ranking->save();
+        } else {
+            Ranking::create([
+                'round_id' => $fish->round->id,
+                'user_id' => $actor->id,
+                'catch_count' => 1,
+            ]);
+        }
 
         return $fish;
     }

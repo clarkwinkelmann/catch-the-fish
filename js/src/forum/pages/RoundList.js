@@ -44,7 +44,7 @@ export default class RoundList extends Page {
                 },
                 children: 'New',
             }),
-            m('table', [
+            m('table.catchthefish-table', [
                 m('thead', m('tr', [
                     m('th', 'Name'),
                     m('th', 'From'),

@@ -53,4 +53,14 @@ class RoundPolicy extends AbstractPolicy
 
         return $actor->can('catchthefish.participate');
     }
+
+    public function listFishes(User $actor, Round $round)
+    {
+        return $this->list($actor);
+    }
+
+    public function listRankings(User $actor, Round $round)
+    {
+        return $actor->can('catchthefish.list-rankings');
+    }
 }

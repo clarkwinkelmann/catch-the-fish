@@ -8,6 +8,7 @@ clarkwinkelmann-catch-the-fish:
             rounds: Rounds
 
         nav:
+            rankings: Catch The Fish Rankings
             settings: Catch The Fish Settings
 
         new-round-modal:
@@ -26,7 +27,7 @@ clarkwinkelmann-catch-the-fish:
             title: You caught a fish !
             named-by: Named by
             placed-by: Placed by
-            congratulation: Congratulation, you caught a fish !
+            congratulation: Congratulation, you caught a fish ! You have caught {catch_count} fishes.
             name: Fish name
             name-help: You can rename the fish if you want. The name must respect the forum guidelines.
             placement-help: You can hide the fish where you want on the forum in recent discussions and active user profiles. You cannot catch a fish you placed yourself.
@@ -62,6 +63,7 @@ clarkwinkelmann-catch-the-fish:
 
         round-alert:
             message: Round "{name}", catch as many fishes as you can until {time}
+            rankings: See rankings
 
         basket:
             title: Fish Basket
@@ -80,6 +82,7 @@ clarkwinkelmann-catch-the-fish:
 
         permissions:
             visible: See the fishes
+            list-rankings: Access the rankings page
             participate: Participate in the rounds and catch fishes
             choose-place: Choose fish placement after catching
             choose-name: Choose fish name after catching

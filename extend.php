@@ -12,6 +12,7 @@ return [
     (new Extend\Frontend('forum'))
         ->css(__DIR__ . '/resources/less/forum.less')
         ->js(__DIR__ . '/js/dist/forum.js')
+        ->route('/catch-the-fish', 'catch-the-fish-ranking')
         ->route('/catch-the-fish/rounds', 'catch-the-fish-rounds')
         ->route('/catch-the-fish/rounds/{id}', 'catch-the-fish-round'),
     (new Extend\Frontend('admin'))
@@ -27,7 +28,8 @@ return [
         ->patch('/catch-the-fish/fishes/{id:[0-9]+}', 'catchthefish.api.fishes.update', Controllers\FishUpdateController::class)
         ->delete('/catch-the-fish/fishes/{id:[0-9]+}', 'catchthefish.api.fishes.delete', Controllers\FishDeleteController::class)
         ->post('/catch-the-fish/fishes/{id:[0-9]+}/catch', 'catchthefish.api.fishes.catch', Controllers\FishCatchController::class)
-        ->post('/catch-the-fish/fishes/{id:[0-9]+}/place', 'catchthefish.api.fishes.place', Controllers\FishPlaceController::class),
+        ->post('/catch-the-fish/fishes/{id:[0-9]+}/place', 'catchthefish.api.fishes.place', Controllers\FishPlaceController::class)
+        ->get('/catch-the-fish/rounds/{id:[0-9]+}/rankings', 'catchthefish.api.rankings.index', Controllers\RankingIndexController::class),
     (new Extend\Locales(__DIR__ . '/resources/locale')),
     new CTFExtend\Policies(),
     new CTFExtend\ForumRelationship(),

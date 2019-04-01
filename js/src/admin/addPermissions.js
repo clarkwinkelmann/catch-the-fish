@@ -4,6 +4,7 @@ import PermissionGrid from 'flarum/components/PermissionGrid';
 
 const PERMISSIONS = [
     'visible',
+    'list-rankings',
     'participate',
     'choose-place',
     'choose-name',
@@ -17,7 +18,7 @@ export default function () {
                 icon: 'fas fa-fish',
                 label: app.translator.trans('clarkwinkelmann-catch-the-fish.admin.permissions.' + permission),
                 permission: 'catchthefish.' + permission,
-                allowGuest: index === 0,
+                allowGuest: index <= 1,
             });
         });
     });

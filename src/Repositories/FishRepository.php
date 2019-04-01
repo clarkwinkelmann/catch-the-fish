@@ -15,8 +15,12 @@ use League\Flysystem\FilesystemInterface;
 class FishRepository
 {
     const BASE_IMAGES = [
+        'pixabay-30828-640.png',
         'pixabay-30837-640.png',
         'pixabay-33712-640.png',
+        'pixabay-36828-640.png',
+        'pixabay-294469-640.png',
+        'pixabay-1331813-640.png',
     ];
 
     public function all(Round $round)
@@ -74,6 +78,11 @@ class FishRepository
 
         $validator->assertValid($attributes);
 
+        if (array_has($attributes, 'name')) {
+            // Remove the link to the last user who renamed the fish if an admin renames it via the admin panel
+            $fish->user_id_last_naming = null;
+        }
+
         $fish->fill($attributes);
         $fish->save();
 
@@ -105,32 +114,20 @@ class FishRepository
          */
         $storage = app('catchthefish-assets');
 
-        $images = [];
+        $now = Carbon::now();
 
-        foreach (self::BASE_IMAGES as $originalImagePath) {
+        foreach (self::BASE_IMAGES as $index => $originalImagePath) {
             $imagePath = Str::random() . '.png';
 
             $storage->put($imagePath, file_get_contents(__DIR__ . '/../../resources/images/' . $originalImagePath));
 
-            $images[] = $imagePath;
+            $fish = new Fish();
+            $fish->round_id = $round->id;
+            $fish->name = 'Fish #' . ($index + 1);
+            $fish->image = $imagePath;
+            Placement::random()->assign($fish);
+            $fish->placement_valid_since = $now;
+            $fish->save();
         }
-
-        $now = Carbon::now();
-
-        $fish = new Fish();
-        $fish->round_id = $round->id;
-        $fish->name = 'Fish #1';
-        $fish->image = $images[0];
-        Placement::random()->assign($fish);
-        $fish->placement_valid_since = $now;
-        $fish->save();
-
-        $fish = new Fish();
-        $fish->round_id = $round->id;
-        $fish->name = 'Fish #2';
-        $fish->image = $images[1];
-        Placement::random()->assign($fish);
-        $fish->placement_valid_since = $now;
-        $fish->save();
     }
 }

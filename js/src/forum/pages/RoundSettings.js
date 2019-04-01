@@ -55,7 +55,7 @@ export default class RoundSettings extends Page {
                 },
                 children: 'New',
             }),
-            m('table', [
+            m('table.catchthefish-table', [
                 m('thead', m('tr', [
                     m('th', 'Image'),
                     m('th', 'Name'),

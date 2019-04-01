@@ -137,7 +137,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var PERMISSIONS = ['visible', 'participate', 'choose-place', 'choose-name', 'moderate'];
+var PERMISSIONS = ['visible', 'list-rankings', 'participate', 'choose-place', 'choose-name', 'moderate'];
 /* harmony default export */ __webpack_exports__["default"] = (function () {
   Object(flarum_extend__WEBPACK_IMPORTED_MODULE_0__["extend"])(flarum_components_PermissionGrid__WEBPACK_IMPORTED_MODULE_2___default.a.prototype, 'viewItems', function (items) {
     PERMISSIONS.forEach(function (permission, index) {
@@ -145,7 +145,7 @@ var PERMISSIONS = ['visible', 'participate', 'choose-place', 'choose-name', 'mod
         icon: 'fas fa-fish',
         label: flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans('clarkwinkelmann-catch-the-fish.admin.permissions.' + permission),
         permission: 'catchthefish.' + permission,
-        allowGuest: index === 0
+        allowGuest: index <= 1
       });
     });
   });
