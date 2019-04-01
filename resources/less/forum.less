@@ -1,0 +1,104 @@
+.catchthefish-basket {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 200px;
+    background: white;
+    border: 2px solid #aaa;
+    padding: 10px;
+    text-align: center;
+}
+
+.catchthefish-basket-title {
+    font-weight: bold;
+}
+
+.catchthefish-basket-fish {
+    cursor: move;
+    max-width: 150px;
+}
+
+.catchthefish-drop-area {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border: 4px dashed #dedede;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dedede;
+    font-weight: bold;
+    font-size: 2em;
+}
+
+.catchthefish-moving-fish {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 140px;
+    opacity: 0.9;
+    animation: 14s swim linear infinite;
+    cursor: pointer;
+
+    .catchthefish-image {
+        animation: 14s flip linear infinite;
+    }
+}
+
+.catchthefish-name {
+    text-align: center;
+    font-weight: bold;
+}
+
+.catchthefish-image {
+    max-width: 100%;
+}
+
+.catchthefish-no-image {
+    background: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+}
+
+@keyframes swim {
+    0% {
+        transform: translateX(-200px);
+    }
+    48% {
+        transform: translateX(200px);
+    }
+    50% {
+        transform: translateX(200px);
+    }
+    98% {
+        transform: translateX(-200px);
+    }
+    100% {
+        transform: translateX(-200px);
+    }
+}
+
+@keyframes flip {
+    0% {
+        transform: scaleX(-1);
+    }
+    48% {
+        transform: scaleX(-1);
+    }
+    50% {
+        transform: scaleX(1);
+    }
+    98% {
+        transform: scaleX(1);
+    }
+    100% {
+        transform: scaleX(-1);
+    }
+}

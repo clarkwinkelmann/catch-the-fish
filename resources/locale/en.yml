@@ -1,0 +1,79 @@
+clarkwinkelmann-catch-the-fish:
+    forum:
+        moderate:
+            add: Add
+            edit: Edit
+            delete: Delete
+            fishes: Fishes
+            rounds: Rounds
+
+        nav:
+            settings: Catch The Fish Settings
+
+        new-round-modal:
+            title: New Round
+
+        new-fish-modal:
+            title: New Fish
+
+        edit-round-modal:
+            title: Edit Round "{name}"
+
+        edit-fish-modal:
+            title: Edit Fish "{name}"
+
+        caught-fish-modal:
+            title: You caught a fish !
+            congratulation: Congratulation, you caught a fish !
+            name: Fish name
+            name-help: You can rename the fish if you want. The name must respect the forum guidelines.
+            placement-help: You can hide the fish where you want on the forum in recent discussions and active user profiles. You cannot catch a fish you placed yourself.
+            submit-name-place-later: Save name and choose hiding place
+            submit-name: Save name
+            submit-place-later: Yep I'll choose a hiding place
+            submit-continue: Continue
+            submit-name-place-random: Save name and let the fish hide itself
+            submit-place-random: Let the fish hide itself
+
+        edit-round:
+            name: Name
+            name-help: The public name for this round, will be shown in banner and in ranking
+            starts-at: Start time
+            ends-at: End time
+            starting-pack: Starting Pack
+            starting-pack-help: Will include a few fishes to get you started in no time
+            create: Create round
+            save: Save round
+            delete: Delete round
+            delete-confirmation: Delete round "{name}" ?
+
+        edit-fish:
+            name: Name
+            name-help: The current name of the fish. Can be edited by players if they have the permission to rename fishes
+            create: Create fish
+            save: Save fish
+            delete: Delete fish
+            delete-confirmation: Delete fish "{name}" ?
+
+        round-alert:
+            message: Round "{name}", catch as many fishes as you can until {time}
+
+        basket:
+            title: Fish Basket
+            drag-help: Drag and drop the fish on a discussion, post or user profile
+            time: "Place until: {time}"
+
+    admin:
+        settings:
+            title: Catch The Fish Settings
+            profile-stats: Show user stats on their profiles
+            animate-horizontal: Animate fish images horizontally
+            animate-flip: Flip fish images based on direction
+            time-to-place: Time allowed to place fish before it is randomly placed
+
+        permissions:
+            visible: See the fishes
+            participate: Participate in the rounds and catch fishes
+            choose-place: Choose fish placement after catching
+            choose-name: Choose fish name after catching
+            moderate: Moderate rounds and fishes

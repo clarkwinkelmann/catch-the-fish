@@ -1,0 +1,41 @@
+{
+    "name": "clarkwinkelmann/catch-the-fish",
+    "description": "Watch your users catch as many fishes as they can",
+    "keywords": [
+        "extension",
+        "flarum",
+        "april-fools",
+        "fish"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Clark Winkelmann",
+            "email": "clark.winkelmann@gmail.com",
+            "homepage": "https://clarkwinkelmann.com/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/clarkwinkelmann/catch-the-fish/issues",
+        "source": "https://github.com/clarkwinkelmann/catch-the-fish"
+    },
+    "require": {
+        "flarum/core": "^0.1.0-beta.8"
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Catch the fish",
+            "icon": {
+                "name": "fas fa-fish",
+                "backgroundColor": "#f4f4f4",
+                "color": "#5f4bb6"
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "ClarkWinkelmann\\CatchTheFish\\": "src/"
+        }
+    }
+}
