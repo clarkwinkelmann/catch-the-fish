@@ -1,9 +1,8 @@
 import app from 'flarum/app';
-import avatar from 'flarum/helpers/avatar';
-import username from 'flarum/helpers/username';
 import Modal from 'flarum/components/Modal';
 import Button from 'flarum/components/Button';
 import FishImage from '../components/FishImage';
+import User from "../components/User";
 
 /* global m */
 
@@ -85,26 +84,16 @@ export default class CaughtFishModal extends Modal {
             namedBy ? m('p', [
                 app.translator.trans(translationPrefix + 'named-by'),
                 ' ',
-                m('a', {
-                    href: app.route.user(namedBy),
-                    config: m.route,
-                }, [
-                    avatar(namedBy),
-                    ' ',
-                    username(namedBy),
-                ]),
+                User.component({
+                    user: namedBy,
+                }),
             ]) : null,
             placedBy ? m('p', [
                 app.translator.trans(translationPrefix + 'placed-by'),
                 ' ',
-                m('a', {
-                    href: app.route.user(placedBy),
-                    config: m.route,
-                }, [
-                    avatar(placedBy),
-                    ' ',
-                    username(placedBy),
-                ]),
+                User.component({
+                    user: placedBy,
+                }),
             ]) : null,
             m('p', app.translator.trans(translationPrefix + 'congratulation', {
                 catch_count: fish.round().ranking().catch_count(),

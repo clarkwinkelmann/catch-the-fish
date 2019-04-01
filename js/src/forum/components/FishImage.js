@@ -1,6 +1,9 @@
+import app from 'flarum/app';
 import Component from 'flarum/Component';
 
 /* global m */
+
+const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.fish-image.';
 
 export default class FishImage extends Component {
     view() {
@@ -8,11 +11,13 @@ export default class FishImage extends Component {
 
         if (src) {
             return m('img.catchthefish-image', {
-                alt: 'Image of fish ' + this.props.fish.name(),
+                alt: app.translator.trans(translationPrefix + 'alt', {
+                    name: this.props.fish.name(),
+                }).join(''),
                 src,
             });
         }
 
-        return m('.catchthefish-no-image', 'Missing fish image');
+        return m('.catchthefish-no-image', app.translator.trans(translationPrefix + 'missing'));
     }
 }

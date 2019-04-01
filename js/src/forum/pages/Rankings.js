@@ -4,19 +4,21 @@ import RoundRankings from "../components/RoundRankings";
 
 /* global m */
 
+const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.page-ranking.';
+
 export default class Rankings extends Page {
     view() {
         if (!app.forum.catchTheFishCanSeeRankingsPage()) {
-            return m('.container', m('p', 'You dont\'t have permission to see the rankings'));
+            return m('.container', m('p', app.translator.trans(translationPrefix + 'permission')));
         }
 
         const rounds = app.forum.catchTheFishActiveRounds();
 
         return m('.container', [
-            m('h2', 'Rankings'),
+            m('h2', app.translator.trans(translationPrefix + 'title')),
             rounds ? rounds.map(round => RoundRankings.component({
                 round,
-            })) : m('p', 'No active rounds'),
+            })) : m('p', app.translator.trans(translationPrefix + 'nothing')),
         ]);
     }
 }

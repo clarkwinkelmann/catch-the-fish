@@ -4,8 +4,11 @@ import Button from 'flarum/components/Button';
 import NewFishModal from '../modals/NewFishModal';
 import EditFishModal from '../modals/EditFishModal';
 import FishImage from '../components/FishImage';
+import User from "../components/User";
 
 /* global m */
+
+const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-fish.';
 
 export default class RoundSettings extends Page {
     init() {
@@ -38,11 +41,13 @@ export default class RoundSettings extends Page {
 
     view() {
         if (!this.round || this.fishes === null) {
-            return m('.container', m('p', 'Loading...'));
+            return m('.container', m('p', app.translator.trans(translationPrefix + 'loading')));
         }
 
         return m('.container', [
-            m('h2', 'Settings for round ' + this.round.name()),
+            m('h2', app.translator.trans(translationPrefix + 'title', {
+                name: this.round.name(),
+            })),
             Button.component({
                 className: 'Button Button--primary',
                 onclick: () => {
@@ -53,13 +58,15 @@ export default class RoundSettings extends Page {
                         },
                     }));
                 },
-                children: 'New',
+                children: app.translator.trans(translationPrefix + 'new'),
             }),
             m('table.catchthefish-table', [
                 m('thead', m('tr', [
-                    m('th', 'Image'),
-                    m('th', 'Name'),
-                    m('th', 'Actions'),
+                    m('th', app.translator.trans(translationPrefix + 'image')),
+                    m('th', app.translator.trans(translationPrefix + 'name')),
+                    m('th', app.translator.trans(translationPrefix + 'user-name')),
+                    m('th', app.translator.trans(translationPrefix + 'user-place')),
+                    m('th', app.translator.trans(translationPrefix + 'actions')),
                 ])),
                 m('tbody', this.fishes.length === 0 ? m('tr', [
                     m('td', 'No fishes'),
@@ -68,6 +75,12 @@ export default class RoundSettings extends Page {
                         fish,
                     })),
                     m('td', fish.name()),
+                    m('td', fish.namedBy() ? User.component({
+                        user: fish.namedBy(),
+                    }) : m('em', app.translator.trans(translationPrefix + 'no-user-name'))),
+                    m('td', fish.placedBy() ? User.component({
+                        user: fish.placedBy(),
+                    }) : m('em', app.translator.trans(translationPrefix + 'no-user-place'))),
                     m('td', [
                         Button.component({
                             className: 'Button',
@@ -79,7 +92,7 @@ export default class RoundSettings extends Page {
                                     },
                                 }));
                             },
-                            children: 'Edit',
+                            children: app.translator.trans(translationPrefix + 'edit'),
                         }),
                     ]),
                 ]))),

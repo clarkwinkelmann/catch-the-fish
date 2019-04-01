@@ -61,6 +61,10 @@ clarkwinkelmann-catch-the-fish:
         moving-fish:
             login: Login to catch fishes
 
+        fish-image:
+            alt: Image of fish "{name}"
+            missing: Missing fish image
+
         round-alert:
             message: Round "{name}", catch as many fishes as you can until {time}
             rankings: See rankings
@@ -69,6 +73,46 @@ clarkwinkelmann-catch-the-fish:
             title: Fish Basket
             drag-help: Drag and drop the fish on a discussion, post or user profile
             time: "Place until: {time}"
+
+        table-round:
+            loading: Loading...
+            title: Rounds
+            new: New round
+            name: Name
+            start: From
+            end: Until
+            actions: Actions
+            edit: Edit
+            fishes: Fishes
+
+        table-fish:
+            loading: Loading...
+            title: Fishes for round {name}
+            new: New fish
+            image: Image
+            name: Name
+            user-name: Last named by
+            user-place: Last placed by
+            actions: Actions
+            edit: Edit
+            no-user-name: Not renamed
+            no-user-place: Random
+
+        table-ranking:
+            loading: Loading...
+            title: Ranking of round {name}
+            rank: Name
+            count: Fishes caught
+            user: User
+
+        page-ranking:
+            title: Rankings
+            permission: You do not have permission to see the rankings
+            nothing: No active rounds
+
+        drop-area:
+            message: You can drop the fish here
+            missing-from-store: Could not find the fish in the data store
 
     admin:
         settings:
@@ -89,6 +133,7 @@ clarkwinkelmann-catch-the-fish:
             moderate: Moderate rounds and fishes
 
     api:
+        default-fish-name: "Fish #{number}"
         wrong-catch-placement: There is no fish here. Maybe you weren't quick enough and someone else got it first
         too-many-placement-models: Only one placement is possible at a time
         invalid-discussion-id: Discussion doesn't seem to exist, maybe it was recently deleted

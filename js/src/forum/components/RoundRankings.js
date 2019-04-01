@@ -1,9 +1,10 @@
 import app from 'flarum/app';
-import avatar from 'flarum/helpers/avatar';
-import username from 'flarum/helpers/username';
 import Page from 'flarum/components/Page';
+import User from "./User";
 
 /* global m */
+
+const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-ranking.';
 
 export default class RoundRankings extends Page {
     init() {
@@ -22,28 +23,25 @@ export default class RoundRankings extends Page {
 
     view() {
         if (this.rankings === null) {
-            return m('p', 'Loading...');
+            return m('p', app.translator.trans(translationPrefix + 'loading'));
         }
 
         return m('div', [
-            m('h2', 'Rankings of round' + this.props.round.name()),
+            m('h2', app.translator.trans(translationPrefix + 'title', {
+                name: this.props.round.name(),
+            })),
             m('table.catchthefish-table', [
                 m('thead', m('tr', [
-                    m('th', 'Place'),
-                    m('th', 'Fishes caught'),
-                    m('th', 'User'),
+                    m('th', app.translator.trans(translationPrefix + 'rank')),
+                    m('th', app.translator.trans(translationPrefix + 'count')),
+                    m('th', app.translator.trans(translationPrefix + 'user')),
                 ])),
                 m('tbody', this.rankings.map((ranking, index) => m('tr', [
                     m('td', '#' + (index + 1)),
                     m('td', ranking.catch_count()),
-                    m('td', m('a', {
-                        href: app.route.user(ranking.user()),
-                        config: m.route,
-                    }, [
-                        avatar(ranking.user()),
-                        ' ',
-                        username(ranking.user()),
-                    ])),
+                    m('td', User.component({
+                        user: ranking.user(),
+                    })),
                 ]))),
             ]),
         ]);

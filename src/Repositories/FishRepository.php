@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Fish;
 use ClarkWinkelmann\CatchTheFish\Round;
 use ClarkWinkelmann\CatchTheFish\Validators\FishValidator;
+use Flarum\Locale\Translator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
@@ -114,6 +115,11 @@ class FishRepository
          */
         $storage = app('catchthefish-assets');
 
+        /**
+         * @var $translator Translator
+         */
+        $translator = app(Translator::class);
+
         $now = Carbon::now();
 
         foreach (self::BASE_IMAGES as $index => $originalImagePath) {
@@ -123,7 +129,9 @@ class FishRepository
 
             $fish = new Fish();
             $fish->round_id = $round->id;
-            $fish->name = 'Fish #' . ($index + 1);
+            $fish->name = $translator->trans('clarkwinkelmann-catch-the-fish.api.default-fish-name', [
+                'number' => $index + 1,
+            ]);
             $fish->image = $imagePath;
             Placement::random()->assign($fish);
             $fish->placement_valid_since = $now;

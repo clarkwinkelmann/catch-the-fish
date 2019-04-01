@@ -77,7 +77,7 @@ function addDropAttrs(attrs, modelProperty) {
                     });
                 });
             } else {
-                alert('Invalid fish');
+                alert(app.translator.trans('clarkwinkelmann-catch-the-fish.forum.drop-area.missing-from-store'));
             }
         }
     };

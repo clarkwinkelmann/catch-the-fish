@@ -7,6 +7,8 @@ import EditRoundModal from '../modals/EditRoundModal';
 
 /* global m */
 
+const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-round.';
+
 export default class RoundList extends Page {
     init() {
         super.init();
@@ -28,11 +30,11 @@ export default class RoundList extends Page {
 
     view() {
         if (this.rounds === null) {
-            return m('.container', m('p', 'Loading...'));
+            return m('.container', m('p', app.translator.trans(translationPrefix + 'loading')));
         }
 
         return m('.container', [
-            m('h2', 'Rounds'),
+            m('h2', app.translator.trans(translationPrefix + 'title')),
             Button.component({
                 className: 'Button Button--primary',
                 onclick: () => {
@@ -42,14 +44,14 @@ export default class RoundList extends Page {
                         },
                     }));
                 },
-                children: 'New',
+                children: app.translator.trans(translationPrefix + 'new'),
             }),
             m('table.catchthefish-table', [
                 m('thead', m('tr', [
-                    m('th', 'Name'),
-                    m('th', 'From'),
-                    m('th', 'To'),
-                    m('th', 'Actions'),
+                    m('th', app.translator.trans(translationPrefix + 'name')),
+                    m('th', app.translator.trans(translationPrefix + 'start')),
+                    m('th', app.translator.trans(translationPrefix + 'end')),
+                    m('th', app.translator.trans(translationPrefix + 'actions')),
                 ])),
                 m('tbody', this.rounds.map(round => m('tr', [
                     m('td', round.name()),
@@ -66,7 +68,7 @@ export default class RoundList extends Page {
                                     },
                                 }));
                             },
-                            children: 'Edit',
+                            children: app.translator.trans(translationPrefix + 'edit'),
                         }),
                         ' ',
                         LinkButton.component({
@@ -74,7 +76,7 @@ export default class RoundList extends Page {
                             href: app.route('catchTheFishRound', {
                                 id: round.id(),
                             }),
-                            children: 'Fishes',
+                            children: app.translator.trans(translationPrefix + 'fishes'),
                         }),
                     ]),
                 ]))),
