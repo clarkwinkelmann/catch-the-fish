@@ -1450,9 +1450,10 @@ function (_Modal) {
     })) : null]);
   };
 
-  _proto.onsubmit = function onsubmit() {
-    // Because the modal has its own form, pressing enter will submit here
+  _proto.onsubmit = function onsubmit(event) {
+    event.preventDefault(); // Because the modal has its own form, pressing enter will submit here
     // In this case we apply the same feature as the first button
+
     this.saveNameAndPlacement();
   };
 

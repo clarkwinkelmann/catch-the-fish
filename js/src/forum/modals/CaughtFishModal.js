@@ -131,7 +131,8 @@ export default class CaughtFishModal extends Modal {
         ]);
     }
 
-    onsubmit() {
+    onsubmit(event) {
+        event.preventDefault();
         // Because the modal has its own form, pressing enter will submit here
         // In this case we apply the same feature as the first button
         this.saveNameAndPlacement();
