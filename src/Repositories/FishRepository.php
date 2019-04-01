@@ -2,6 +2,7 @@
 
 namespace ClarkWinkelmann\CatchTheFish\Repositories;
 
+use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Fish;
 use ClarkWinkelmann\CatchTheFish\Round;
 use ClarkWinkelmann\CatchTheFish\Validators\FishValidator;
@@ -38,6 +39,7 @@ class FishRepository
      * @param array $attributes
      * @return Fish
      * @throws ValidationException
+     * @throws \Flarum\Foundation\ValidationException
      */
     public function store(Round $round, array $attributes): Fish
     {
@@ -50,6 +52,8 @@ class FishRepository
 
         $fish = new Fish($attributes);
         $fish->round()->associate($round);
+        Placement::random()->assign($fish);
+        $fish->placement_valid_since = Carbon::now();
         $fish->save();
 
         return $fish;
@@ -90,6 +94,10 @@ class FishRepository
         $fish->delete();
     }
 
+    /**
+     * @param Round $round
+     * @throws \Flarum\Foundation\ValidationException
+     */
     public function storeDefaultData(Round $round): void
     {
         /**
@@ -107,16 +115,22 @@ class FishRepository
             $images[] = $imagePath;
         }
 
+        $now = Carbon::now();
+
         $fish = new Fish();
         $fish->round_id = $round->id;
         $fish->name = 'Fish #1';
         $fish->image = $images[0];
+        Placement::random()->assign($fish);
+        $fish->placement_valid_since = $now;
         $fish->save();
 
         $fish = new Fish();
         $fish->round_id = $round->id;
         $fish->name = 'Fish #2';
         $fish->image = $images[1];
+        Placement::random()->assign($fish);
+        $fish->placement_valid_since = $now;
         $fish->save();
     }
 }

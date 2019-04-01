@@ -14,18 +14,24 @@ export default class Basket extends Component {
 
         const basket = app.session.user.catchTheFishBasket();
 
-        if (!basket || basket.length === 0) {
+        if (!basket) {
+            return m('div');
+        }
+
+        const fishesThatCanBePlaced = basket.filter(fish => fish.canPlace());
+
+        if (fishesThatCanBePlaced.length === 0) {
             return m('div');
         }
 
         return m('.catchthefish-basket', [
             m('.catchthefish-basket-title', app.translator.trans(translationPrefix + 'title')),
             m('p', app.translator.trans(translationPrefix + 'drag-help')),
-            basket.map(fish => m('.catchthefish-basket-entry', [
+            fishesThatCanBePlaced.map(fish => m('.catchthefish-basket-entry', [
                 m('.catchthefish-basket-fish', {
                     draggable: true,
                     ondragstart(event) {
-                        event.dataTransfer.setData('text/plain', 'fish:1');
+                        event.dataTransfer.setData('text/plain', 'fish:' + fish.id());
                     },
                 }, FishImage.component({
                     fish,

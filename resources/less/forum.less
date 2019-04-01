@@ -37,16 +37,22 @@
 
 .catchthefish-moving-fish {
     position: absolute;
-    top: 0;
+    top: 10px;
     left: 50%;
     width: 140px;
     opacity: 0.9;
     animation: 14s swim linear infinite;
     cursor: pointer;
 
-    .catchthefish-image {
+    &.catchthefish-animate-flip .catchthefish-image {
         animation: 14s flip linear infinite;
     }
+}
+
+.UserCard,
+.DiscussionHero {
+    // For the absolute positioning to work
+    position: relative;
 }
 
 .catchthefish-name {
@@ -65,6 +71,23 @@
     align-items: center;
     justify-content: center;
     padding: 5px;
+}
+
+.catchthefish-catch-modal {
+    text-align: center;
+
+    .catchthefish-image {
+        display: block;
+        width: 80%;
+        margin: 0 auto 20px;
+    }
+
+    .Avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        line-height: 24px;
+    }
 }
 
 @keyframes swim {

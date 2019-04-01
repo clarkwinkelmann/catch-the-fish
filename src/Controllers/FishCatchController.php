@@ -29,6 +29,8 @@ class FishCatchController extends AbstractShowController
      * @param Document $document
      * @return Fish
      * @throws ModelNotFoundException
+     * @throws \Flarum\Foundation\ValidationException
+     * @throws \Flarum\User\Exception\PermissionDeniedException
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {

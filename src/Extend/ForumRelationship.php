@@ -32,7 +32,7 @@ class ForumRelationship implements ExtenderInterface
          */
         $rounds = app(RoundRepository::class);
 
-        if ($event->isController(ShowForumController::class)) {
+        if ($event->isController(ShowForumController::class) && $event->actor->can('catchthefish.visible')) {
             $event->data['catchTheFishActiveRounds'] = $rounds->allActive();
         }
     }
@@ -46,7 +46,7 @@ class ForumRelationship implements ExtenderInterface
 
     public function includes(WillGetData $event)
     {
-        if ($event->isController(ShowForumController::class)) {
+        if ($event->isController(ShowForumController::class) && app(SettingsRepositoryInterface::class)->get('catch-the-fish.alertRound', true)) {
             $event->addInclude('catchTheFishActiveRounds');
         }
     }
@@ -54,7 +54,13 @@ class ForumRelationship implements ExtenderInterface
     public function permissions(Serializing $event)
     {
         if ($event->serializer instanceof ForumSerializer) {
+            /**
+             * @var $settings SettingsRepositoryInterface
+             */
+            $settings = app(SettingsRepositoryInterface::class);
+
             $event->attributes['catchTheFishCanModerate'] = $event->actor->can('catchthefish.moderate');
+            $event->attributes['catchTheFishAnimateFlip'] = (bool)$settings->get('catch-the-fish.animateFlip', true);
         }
     }
 }

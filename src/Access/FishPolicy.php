@@ -5,12 +5,15 @@ namespace ClarkWinkelmann\CatchTheFish\Access;
 use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Fish;
 use Flarum\Foundation\ValidationException;
+use Flarum\Locale\Translator;
 use Flarum\User\AbstractPolicy;
 use Flarum\User\User;
 
 class FishPolicy extends AbstractPolicy
 {
     protected $model = Fish::class;
+
+    const TRANSLATION_PREFIX = 'clarkwinkelmann-catch-the-fish.api.';
 
     public function create(User $actor)
     {
@@ -27,17 +30,22 @@ class FishPolicy extends AbstractPolicy
         return $this->update($actor, $fish);
     }
 
+    public function see(User $actor, Fish $fish)
+    {
+        return $actor->can('catchthefish.visible');
+    }
+
     public function catch(User $actor, Fish $fish)
     {
         if ($actor->id === $fish->user_id_last_placement) {
             throw new ValidationException([
-                'placement' => 'Cannot catch a fish you placed',
+                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'cannot-catch-own-fish'),
             ]);
         }
 
         if (!$fish->placement_valid_since || $fish->placement_valid_since->gt(Carbon::now())) {
             throw new ValidationException([
-                'placement' => 'The previous catcher needs to release the fish before you can catch it',
+                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'cannot-catch-hold-fish'),
             ]);
         }
 
@@ -48,13 +56,13 @@ class FishPolicy extends AbstractPolicy
     {
         if (!$fish->user_id_last_catch || $fish->user_id_last_catch !== $actor->id) {
             throw new ValidationException([
-                'placement' => 'You can no longer edit this fish. Somebody else has probably caught it.',
+                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'fish-update-wrong-user'),
             ]);
         }
 
         if (!$fish->placement_valid_since || $fish->placement_valid_since->lt(Carbon::now())) {
             throw new ValidationException([
-                'placement' => 'Too late, you can no longer edit this fish. It has automatically been placed somewhere in the meantime.',
+                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'fish-update-expired'),
             ]);
         }
 

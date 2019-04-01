@@ -213,8 +213,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flarum_app__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(flarum_app__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var flarum_components_SettingsModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! flarum/components/SettingsModal */ "flarum/components/SettingsModal");
 /* harmony import */ var flarum_components_SettingsModal__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(flarum_components_SettingsModal__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var flarum_components_Switch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! flarum/components/Switch */ "flarum/components/Switch");
+/* harmony import */ var flarum_components_Switch__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(flarum_components_Switch__WEBPACK_IMPORTED_MODULE_3__);
 
 
+
+
+/* global m */
 
 var settingsPrefix = 'catch-the-fish.';
 var translationPrefix = 'clarkwinkelmann-catch-the-fish.admin.settings.';
@@ -235,8 +240,41 @@ function (_SettingsModal) {
   };
 
   _proto.form = function form() {
-    // TODO: list settings
-    return [m("p", null, "coming")];
+    var _this = this;
+
+    return [m('.Form-group', [m('label', flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans(translationPrefix + 'discussion-age')), m('input.FormControl', {
+      type: 'number',
+      min: 1,
+      step: 1,
+      bidi: this.setting(settingsPrefix + 'discussionAgeDays', 14)
+    })]), m('.Form-group', [m('label', flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans(translationPrefix + 'post-age')), m('input.FormControl', {
+      type: 'number',
+      min: 1,
+      step: 1,
+      bidi: this.setting(settingsPrefix + 'postAgeDays', 14)
+    })]), m('.Form-group', [m('label', flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans(translationPrefix + 'user-age')), m('input.FormControl', {
+      type: 'number',
+      min: 1,
+      step: 1,
+      bidi: this.setting(settingsPrefix + 'userAgeDays', 14)
+    })]), m('.Form-group', [m('label', flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans(translationPrefix + 'time-to-place')), m('input.FormControl', {
+      type: 'number',
+      min: 1,
+      step: 1,
+      bidi: this.setting(settingsPrefix + 'autoPlacedAfterMinutes', 5)
+    })]), m('.Form-group', [flarum_components_Switch__WEBPACK_IMPORTED_MODULE_3___default.a.component({
+      state: this.setting(settingsPrefix + 'alertRound', '1')() === '1',
+      onchange: function onchange(value) {
+        _this.setting(settingsPrefix + 'alertRound')(value ? '1' : '0');
+      },
+      children: flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans(translationPrefix + 'alert-round')
+    })]), m('.Form-group', [flarum_components_Switch__WEBPACK_IMPORTED_MODULE_3___default.a.component({
+      state: this.setting(settingsPrefix + 'animateFlip', '1')() === '1',
+      onchange: function onchange(value) {
+        _this.setting(settingsPrefix + 'animateFlip')(value ? '1' : '0');
+      },
+      children: flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans(translationPrefix + 'animate-flip')
+    })])];
   };
 
   return CTFSettingsModal;
@@ -276,6 +314,17 @@ module.exports = flarum.core.compat['components/PermissionGrid'];
 /***/ (function(module, exports) {
 
 module.exports = flarum.core.compat['components/SettingsModal'];
+
+/***/ }),
+
+/***/ "flarum/components/Switch":
+/*!**********************************************************!*\
+  !*** external "flarum.core.compat['components/Switch']" ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = flarum.core.compat['components/Switch'];
 
 /***/ }),
 

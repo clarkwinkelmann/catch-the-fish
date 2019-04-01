@@ -1,4 +1,6 @@
 import app from 'flarum/app';
+import avatar from 'flarum/helpers/avatar';
+import username from 'flarum/helpers/username';
 import Modal from 'flarum/components/Modal';
 import Button from 'flarum/components/Button';
 import FishImage from '../components/FishImage';
@@ -17,7 +19,7 @@ export default class CaughtFishModal extends Modal {
     }
 
     className() {
-        return 'Modal--small';
+        return 'Modal--small catchthefish-catch-modal';
     }
 
     title() {
@@ -45,6 +47,13 @@ export default class CaughtFishModal extends Modal {
             }).then(result => {
                 app.store.pushPayload(result);
                 this.hide();
+
+                if (this.props.fish.canPlace() && !randomPlacement) {
+                    // Refresh basket by reloading user
+                    app.store.find('users', app.session.user.id()).then(() => {
+                        m.redraw();
+                    });
+                }
             }).catch(err => {
                 this.loading = false;
                 m.redraw();
@@ -52,16 +61,51 @@ export default class CaughtFishModal extends Modal {
             });
         } else {
             this.hide();
+
+            if (this.props.fish.canPlace() && !randomPlacement) {
+                // Refresh basket by reloading user
+                app.store.find('users', app.session.user.id()).then(() => {
+                    m.redraw();
+                });
+            }
         }
     }
 
     content() {
         const {fish} = this.props;
 
+        const namedBy = fish.namedBy();
+        const placedBy = fish.placedBy();
+
         return m('.Modal-body', [
+            m('h3','"' + fish.name() + '"'),
             FishImage.component({
                 fish,
             }),
+            namedBy ? m('p', [
+                app.translator.trans(translationPrefix + 'named-by'),
+                ' ',
+                m('a', {
+                    href: app.route.user(namedBy),
+                    config: m.route,
+                }, [
+                    avatar(namedBy),
+                    ' ',
+                    username(namedBy),
+                ]),
+            ]) : null,
+            placedBy ? m('p', [
+                app.translator.trans(translationPrefix + 'placed-by'),
+                ' ',
+                m('a', {
+                    href: app.route.user(placedBy),
+                    config: m.route,
+                }, [
+                    avatar(placedBy),
+                    ' ',
+                    username(placedBy),
+                ]),
+            ]) : null,
             m('p', app.translator.trans(translationPrefix + 'congratulation')),
             fish.canName() ? m('.Form-group', [
                 m('p', app.translator.trans(translationPrefix + 'name-help')),

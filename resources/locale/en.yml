@@ -24,6 +24,8 @@ clarkwinkelmann-catch-the-fish:
 
         caught-fish-modal:
             title: You caught a fish !
+            named-by: Named by
+            placed-by: Placed by
             congratulation: Congratulation, you caught a fish !
             name: Fish name
             name-help: You can rename the fish if you want. The name must respect the forum guidelines.
@@ -55,6 +57,9 @@ clarkwinkelmann-catch-the-fish:
             delete: Delete fish
             delete-confirmation: Delete fish "{name}" ?
 
+        moving-fish:
+            login: Login to catch fishes
+
         round-alert:
             message: Round "{name}", catch as many fishes as you can until {time}
 
@@ -66,10 +71,12 @@ clarkwinkelmann-catch-the-fish:
     admin:
         settings:
             title: Catch The Fish Settings
-            profile-stats: Show user stats on their profiles
-            animate-horizontal: Animate fish images horizontally
+            discussion-age: How old discussions can be for a fish to be placed on it (days)
+            post-age: How old posts can be for a fish to be placed on it (days)
+            user-age: How long since a user must have been active for a fish to be placed on it (days)
+            time-to-place: Time allowed to place fish before it is randomly placed (minutes)
+            alert-round: Show an altert with the round name and duration on the homepage
             animate-flip: Flip fish images based on direction
-            time-to-place: Time allowed to place fish before it is randomly placed
 
         permissions:
             visible: See the fishes
@@ -77,3 +84,24 @@ clarkwinkelmann-catch-the-fish:
             choose-place: Choose fish placement after catching
             choose-name: Choose fish name after catching
             moderate: Moderate rounds and fishes
+
+    api:
+        wrong-catch-placement: There is no fish here. Maybe you weren't quick enough and someone else got it first
+        too-many-placement-models: Only one placement is possible at a time
+        invalid-discussion-id: Discussion doesn't seem to exist, maybe it was recently deleted
+        invalid-post-id: Post doesn't seem to exist, maybe it was recently deleted
+        invalid-user-id: User doesn't seem to exist, maybe it was recently deleted
+        model-deleted: Can't place fish on a deleted discussion or post
+        model-private: Can't place fish on a private discussion or post
+        inactive-discussion: Can't place fish on discussion inactive for more than {days} days
+        inactive-post: Can't place fish on post created more than {days} days ago
+        inactive-user: Can't place fish on user inactive for more than {days} days
+        non-comment-post: Can only place fishes on comment posts
+        user-suspended: Can't place fish on a suspended user
+        random-error: Could not generate a random fish placement
+        cannot-catch-own-fish: You cannot catch a fish you placed yourself
+        cannot-catch-hold-fish: The previous catcher needs to release the fish before you can catch it
+        fish-update-wrong-user: You can no longer edit this fish. Somebody else has probably caught it
+        fish-update-expired: Too late, you can no longer edit this fish. It has automatically been placed somewhere in the meantime
+        round-not-started: This round has not started
+        round-finished: This round is finished

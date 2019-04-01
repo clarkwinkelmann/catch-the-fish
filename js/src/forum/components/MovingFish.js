@@ -1,4 +1,5 @@
 import app from 'flarum/app';
+import classList from 'flarum/utils/classList';
 import Component from 'flarum/Component';
 import FishImage from './FishImage';
 import CaughtFishModal from '../modals/CaughtFishModal';
@@ -10,13 +11,12 @@ export default class MovingFish extends Component {
         const {fish} = this.props;
 
         return m('.catchthefish-moving-fish', {
+            className: classList({
+                'catchthefish-animate-flip': app.forum.catchTheFishAnimateFlip(),
+            }),
             onclick: () => {
-                if (!fish.canCatch()) {
-                    if (!app.session.user) {
-                        alert('Login to catch fishes');
-                    } else {
-                        alert('Catching fishes is restricted to certain groups');
-                    }
+                if (!fish.canCatch() && !app.session.user) {
+                    alert(app.translator.trans('clarkwinkelmann-catch-the-fish.forum.moving-fish.login'));
                     return;
                 }
 

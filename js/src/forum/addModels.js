@@ -17,4 +17,5 @@ export default function () {
     User.prototype.catchTheFishBasket = Model.hasMany('catchTheFishBasket');
     Forum.prototype.catchTheFishActiveRounds = Model.hasMany('catchTheFishActiveRounds');
     Forum.prototype.catchTheFishCanModerate = Model.attribute('catchTheFishCanModerate');
+    Forum.prototype.catchTheFishAnimateFlip = Model.attribute('catchTheFishAnimateFlip');
 }

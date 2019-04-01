@@ -4,11 +4,14 @@ namespace ClarkWinkelmann\CatchTheFish\Repositories;
 
 use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Fish;
-use Flarum\Database\AbstractModel;
 use Flarum\Discussion\Discussion;
+use Flarum\Extension\ExtensionManager;
 use Flarum\Foundation\ValidationException;
+use Flarum\Locale\Translator;
 use Flarum\Post\Post;
+use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Placement
@@ -17,91 +20,168 @@ class Placement
     public $postId;
     public $userId;
 
-    public function isValid(): bool
+    const TRANSLATION_PREFIX = 'clarkwinkelmann-catch-the-fish.api.';
+
+    protected static function settingDiscussionAgeDays()
     {
-        // One and only one anchor resource must be chosen
-        if (!is_null($this->discussionId) + !is_null($this->postId) + !is_null($this->userId) !== 1) {
-            return false;
-        }
+        return app(SettingsRepositoryInterface::class)->get('catch-the-fish.discussionAgeDays', 14);
+    }
 
-        switch (false) {
-            case is_null($this->discussionId):
-                if (!Discussion::where('is_private', false)->where('id', $this->discussionId)->exists()) {
-                    return false;
-                }
-                break;
-            case is_null($this->postId):
-                if (!Post::where('is_private', false)->where('id', $this->postId)->exists()) {
-                    return false;
-                }
-                break;
-            case is_null($this->userId):
-                // TODO: prevent ignored users
-                if (!User::where('id', $this->discussionId)->exists()) {
-                    return false;
-                }
-                break;
-        }
+    protected static function settingPostAgeDays()
+    {
+        return app(SettingsRepositoryInterface::class)->get('catch-the-fish.postAgeDays', 14);
+    }
 
-        return true;
+    protected static function settingUserAgeDays()
+    {
+        return app(SettingsRepositoryInterface::class)->get('catch-the-fish.userAgeDays', 14);
     }
 
     /**
-     * @param AbstractModel $model
      * @throws ValidationException
      */
-    protected function assertPlacementOnResource(AbstractModel $model)
+    public function assertValid(): void
     {
+        /**
+         * @var $translator Translator
+         */
+        $translator = app(Translator::class);
+
+        // One and only one anchor resource must be chosen
+        if (!is_null($this->discussionId) + !is_null($this->postId) + !is_null($this->userId) !== 1) {
+            throw new ValidationException([
+                'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'too-many-placement-models'),
+            ]);
+        }
+
+        $model = null;
+
+        switch (false) {
+            case is_null($this->discussionId):
+                if (!($model = Discussion::query()->where('id', $this->discussionId)->first())) {
+                    throw new ValidationException([
+                        'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'invalid-discussion-id'),
+                    ]);
+                }
+                break;
+            case is_null($this->postId):
+                if (!($model = Post::query()->where('id', $this->postId)->first())) {
+                    throw new ValidationException([
+                        'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'invalid-post-id'),
+                    ]);
+                }
+                break;
+            case is_null($this->userId):
+                if (!($model = User::query()->where('id', $this->userId)->first())) {
+                    throw new ValidationException([
+                        'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'invalid-user-id'),
+                    ]);
+                }
+                break;
+        }
+
         if ($model instanceof Discussion || $model instanceof Post) {
+            if (!is_null($model->hidden_at)) {
+                throw new ValidationException([
+                    'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'model-deleted'),
+                ]);
+            }
+
             if ($model->is_private) {
                 throw new ValidationException([
-                    'placement' => 'Can\'t place fish on a private discussion or post',
+                    'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'model-private'),
                 ]);
             }
-            // TODO: check modified since
         }
 
-        if ($model instanceof User) {
-            if ($model->last_seen_at->lt(Carbon::now()->subDays(7))) {
+        if ($model instanceof Discussion) {
+            if ($model->last_posted_at->lt(Carbon::now()->subDays(self::settingDiscussionAgeDays()))) {
                 throw new ValidationException([
-                    'placement' => 'Can\'t place fish on a user that hasn\'t been seen for n days',
+                    'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'inactive-discussion', [
+                        'days' => self::settingDiscussionAgeDays(),
+                    ]),
+                ]);
+            }
+        } else if ($model instanceof Post) {
+            if ($model->created_at->lt(Carbon::now()->subDays(self::settingPostAgeDays()))) {
+                throw new ValidationException([
+                    'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'inactive-post', [
+                        'days' => self::settingDiscussionAgeDays(),
+                    ]),
                 ]);
             }
 
-            // TODO: extensions
-            if ($model->suspended_at) {
+            if ($model->type !== 'comment') {
                 throw new ValidationException([
-                    'placement' => 'Can\'t place fish on a suspended user',
+                    'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'non-comment-post'),
+                ]);
+            }
+        } else if ($model instanceof User) {
+            if ($model->last_seen_at->lt(Carbon::now()->subDays(self::settingUserAgeDays()))) {
+                throw new ValidationException([
+                    'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'inactive-user', [
+                        'days' => self::settingUserAgeDays(),
+                    ]),
+                ]);
+            }
+
+            /**
+             * @var $extensions ExtensionManager
+             */
+            $extensions = app(ExtensionManager::class);
+
+            if ($extensions->isEnabled('flarum-suspend') && !is_null($model->suspended_until) && $model->suspended_until->gt(Carbon::now())) {
+                throw new ValidationException([
+                    'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'user-suspended'),
                 ]);
             }
         }
     }
 
+    /**
+     * @return Model|User
+     */
     protected static function randomUser(): User
     {
-        // TODO: suspend
-        // TODO: activity instead of online time ?
-        return User::where('last_seen_at', '>', Carbon::now()->subDays(7))
-            ->inRandomOrder()
-            ->firstOrFail();
+        $query = User::query()
+            ->where('last_seen_at', '>', Carbon::now()->subDays(self::settingUserAgeDays()))
+            ->whereHas('posts');
+
+        /**
+         * @var $extensions ExtensionManager
+         */
+        $extensions = app(ExtensionManager::class);
+
+        if ($extensions->isEnabled('flarum-suspend')) {
+            $query->whereNull('suspended_until');
+        }
+
+        return $query->inRandomOrder()->firstOrFail();
     }
 
+    /**
+     * @return Model|Discussion
+     */
     protected static function randomDiscussion(): Discussion
     {
-        return Discussion::where('is_private', false)
+        return Discussion::query()
+            ->where('is_private', false)
             ->whereNull('hidden_at')
-            //->where('last_posted_at', '>', Carbon::now()->subDays(7)) // TODO: setting
+            ->where('last_posted_at', '>', Carbon::now()->subDays(self::settingDiscussionAgeDays()))
             ->inRandomOrder()
             ->firstOrFail();
     }
 
+    /**
+     * @return Model|Post
+     */
     protected static function randomPost(): Post
     {
-        // TODO: also for old posts of recently active discussions ?
-        return Post::where('is_private', false)
+        return Post::query()
+            ->where('is_private', false)
             ->whereNull('hidden_at')
             ->where('type', 'comment')
-            //->where('created_at', '>', Carbon::now()->subDays(7)) // TODO: setting
+            ->where('created_at', '>', Carbon::now()->subDays(self::settingPostAgeDays()))
             ->inRandomOrder()
             ->firstOrFail();
     }
@@ -125,8 +205,13 @@ class Placement
                     break;
             }
         } catch (ModelNotFoundException $exception) {
+            /**
+             * @var $translator Translator
+             */
+            $translator = app(Translator::class);
+
             throw new ValidationException([
-                'placement' => 'Could not find a suitable place for the fish',
+                'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'random-error'),
             ]);
         }
 

@@ -9,7 +9,6 @@ use ClarkWinkelmann\CatchTheFish\Serializers\FishSerializer;
 use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
-use Illuminate\Validation\ValidationException;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
@@ -33,7 +32,8 @@ class FishStoreController extends AbstractCreateController
      * @param Document $document
      * @return Fish
      * @throws PermissionDeniedException
-     * @throws ValidationException
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Flarum\Foundation\ValidationException
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {

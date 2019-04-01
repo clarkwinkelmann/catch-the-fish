@@ -54,6 +54,7 @@ class RoundRepository
      * @param array $attributes
      * @return Round
      * @throws ValidationException
+     * @throws \Flarum\Foundation\ValidationException
      */
     public function store(array $attributes): Round
     {

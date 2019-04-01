@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Fish;
 use ClarkWinkelmann\CatchTheFish\Validators\FishValidator;
 use Flarum\Foundation\ValidationException;
+use Flarum\Locale\Translator;
+use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\AssertPermissionTrait;
 use Flarum\User\User;
 
@@ -13,6 +15,11 @@ class PlacementRepository
 {
     use AssertPermissionTrait;
 
+    /**
+     * @param Fish $fish
+     * @param array $placement
+     * @throws ValidationException
+     */
     protected function assertFishIsAtPlacement(Fish $fish, array $placement): void
     {
         foreach ([
@@ -26,18 +33,30 @@ class PlacementRepository
             }
         }
 
+        /**
+         * @var $translator Translator
+         */
+        $translator = app(Translator::class);
+
         throw new ValidationException([
-            'placement' => 'There are no fishes there. Maybe you weren\'t quick enough and somebody got it first',
+            'placement' => $translator->trans('clarkwinkelmann-catch-the-fish.api.wrong-catch-placement'),
         ]);
     }
 
+    /**
+     * @param User $actor
+     * @param Fish $fish
+     * @param array $placement
+     * @return Fish
+     * @throws ValidationException
+     * @throws \Flarum\User\Exception\PermissionDeniedException
+     */
     public function catch(User $actor, Fish $fish, array $placement): Fish
     {
         $this->assertCan($actor, 'catch', $fish);
 
         $this->assertFishIsAtPlacement($fish, $placement);
 
-        $fish->user_id_last_naming = null;
         $fish->user_id_last_placement = null;
         $fish->last_caught_at = Carbon::now();
         $fish->lastUserCatch()->associate($actor);
@@ -47,8 +66,12 @@ class PlacementRepository
 
         // Using permission directly instead of policy to not over-complicate time-based conditions
         // In the worst case we block the fish for a few minutes while nobody can edit it
-        if ($actor->can('catchthefish.choose-place')) {
-            $placementValidSince->addMinutes(5); // TODO: setting
+        if ($actor->can('catchthefish.choose-place') || $actor->can('catchthefish.choose-name')) {
+            /**
+             * @var $settings SettingsRepositoryInterface
+             */
+            $settings = app(SettingsRepositoryInterface::class);
+            $placementValidSince->addMinutes($settings->get('catch-the-fish.autoPlacedAfterMinutes', 5));
         }
 
         $fish->placement_valid_since = $placementValidSince;
@@ -60,6 +83,15 @@ class PlacementRepository
         return $fish;
     }
 
+    /**
+     * @param User $actor
+     * @param Fish $fish
+     * @param array $attributes
+     * @return Fish
+     * @throws ValidationException
+     * @throws \Flarum\User\Exception\PermissionDeniedException
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function place(User $actor, Fish $fish, array $attributes): Fish
     {
         if (array_has($attributes, 'placement')) {
@@ -71,11 +103,7 @@ class PlacementRepository
                 $placement->postId = array_get($attributes, 'placement.post_id');
                 $placement->userId = array_get($attributes, 'placement.user_id');
 
-                if (!$placement->isValid()) {
-                    throw new ValidationException([
-                        'placement' => 'This is not a valid fish placement. Maybe the post is too old or the user inactive',
-                    ]);
-                }
+                $placement->assertValid();
 
                 $placement->assign($fish);
                 $fish->lastUserPlacement()->associate($actor);

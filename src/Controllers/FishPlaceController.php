@@ -30,6 +30,8 @@ class FishPlaceController extends AbstractShowController
      * @return Fish
      * @throws ModelNotFoundException
      * @throws \Flarum\Foundation\ValidationException
+     * @throws \Flarum\User\Exception\PermissionDeniedException
+     * @throws \Illuminate\Validation\ValidationException
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {

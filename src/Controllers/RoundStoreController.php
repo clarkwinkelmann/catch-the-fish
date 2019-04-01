@@ -8,7 +8,6 @@ use ClarkWinkelmann\CatchTheFish\Serializers\RoundSerializer;
 use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
-use Illuminate\Validation\ValidationException;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
@@ -30,7 +29,8 @@ class RoundStoreController extends AbstractCreateController
      * @param Document $document
      * @return Round
      * @throws PermissionDeniedException
-     * @throws ValidationException
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Flarum\Foundation\ValidationException
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {

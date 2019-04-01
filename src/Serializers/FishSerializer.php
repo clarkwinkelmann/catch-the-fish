@@ -38,6 +38,7 @@ class FishSerializer extends AbstractSerializer
                 'post_id' => $fish->post_id_placement,
                 'user_id' => $fish->user_id_placement,
             ] : null,
+            'canSee' => $this->actorCan('see', $fish),
             'canCatch' => $this->actorCan('catch', $fish),
             'canName' => $this->actorCan('name', $fish),
             'canPlace' => $canPlace,
