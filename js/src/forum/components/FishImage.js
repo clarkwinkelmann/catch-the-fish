@@ -15,6 +15,9 @@ export default class FishImage extends Component {
                     name: this.props.fish.name(),
                 }).join(''),
                 src,
+                style: {
+                    animationDuration: this.props.animationDuration || '10s',
+                },
             });
         }
 

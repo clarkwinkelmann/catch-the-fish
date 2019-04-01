@@ -953,7 +953,10 @@ function (_Component) {
         alt: flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans(translationPrefix + 'alt', {
           name: this.props.fish.name()
         }).join(''),
-        src: src
+        src: src,
+        style: {
+          animationDuration: this.props.animationDuration || '10s'
+        }
       });
     }
 
@@ -1005,14 +1008,25 @@ function (_Component) {
 
   var _proto = MovingFish.prototype;
 
+  _proto.init = function init() {
+    _Component.prototype.init.call(this);
+
+    this.reverseAnimation = Math.random() > 0.5;
+    this.animationDuration = 5 + Math.floor(Math.random() * 70) / 10 + 's';
+  };
+
   _proto.view = function view() {
     var _this = this;
 
     var fish = this.props.fish;
     return m('.catchthefish-moving-fish', {
       className: flarum_utils_classList__WEBPACK_IMPORTED_MODULE_2___default()({
-        'catchthefish-animate-flip': flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.forum.catchTheFishAnimateFlip()
+        'catchthefish-animate-flip': flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.forum.catchTheFishAnimateFlip(),
+        'catchthefish-animate-reverse': this.reverseAnimation
       }),
+      style: {
+        animationDuration: this.animationDuration
+      },
       onclick: function onclick() {
         if (!fish.canCatch() && !flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.session.user) {
           alert(flarum_app__WEBPACK_IMPORTED_MODULE_1___default.a.translator.trans('clarkwinkelmann-catch-the-fish.forum.moving-fish.login'));
@@ -1034,7 +1048,8 @@ function (_Component) {
         });
       }
     }, [m('.catchthefish-name', fish.name()), _FishImage__WEBPACK_IMPORTED_MODULE_4__["default"].component({
-      fish: fish
+      fish: fish,
+      animationDuration: this.animationDuration
     })]);
   };
 

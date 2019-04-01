@@ -7,13 +7,24 @@ import CaughtFishModal from '../modals/CaughtFishModal';
 /* global m */
 
 export default class MovingFish extends Component {
+    init() {
+        super.init();
+
+        this.reverseAnimation = Math.random() > 0.5;
+        this.animationDuration = 5 + (Math.floor(Math.random() * 70) / 10) + 's';
+    }
+
     view() {
         const {fish} = this.props;
 
         return m('.catchthefish-moving-fish', {
             className: classList({
                 'catchthefish-animate-flip': app.forum.catchTheFishAnimateFlip(),
+                'catchthefish-animate-reverse': this.reverseAnimation,
             }),
+            style: {
+                animationDuration: this.animationDuration,
+            },
             onclick: () => {
                 if (!fish.canCatch() && !app.session.user) {
                     alert(app.translator.trans('clarkwinkelmann-catch-the-fish.forum.moving-fish.login'));
@@ -39,6 +50,7 @@ export default class MovingFish extends Component {
             m('.catchthefish-name', fish.name()),
             FishImage.component({
                 fish,
+                animationDuration: this.animationDuration,
             }),
         ]);
     }
