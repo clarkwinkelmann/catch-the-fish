@@ -107,6 +107,14 @@ class RoundRepository
      */
     public function delete(Round $round): void
     {
+        /**
+         * @var $uploader FishImageUploader
+         */
+        $uploader = app(FishImageUploader::class);
+        foreach ($round->fishes as $fish) {
+            $uploader->remove($fish);
+        }
+
         $round->delete();
     }
 }

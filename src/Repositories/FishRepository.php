@@ -5,13 +5,16 @@ namespace ClarkWinkelmann\CatchTheFish\Repositories;
 use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Fish;
 use ClarkWinkelmann\CatchTheFish\Round;
+use ClarkWinkelmann\CatchTheFish\Validators\FishImageValidator;
 use ClarkWinkelmann\CatchTheFish\Validators\FishValidator;
 use Flarum\Locale\Translator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use League\Flysystem\FilesystemInterface;
+use Intervention\Image\Image;
+use Intervention\Image\ImageManager;
+use Psr\Http\Message\UploadedFileInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FishRepository
 {
@@ -90,9 +93,111 @@ class FishRepository
         return $fish;
     }
 
-    public function updateImage(Fish $fish, array $attributes): Fish
+    /**
+     * @param Fish $fish
+     * @param UploadedFileInterface $file
+     * @return Fish
+     * @throws ValidationException
+     */
+    public function updateImage(Fish $fish, UploadedFileInterface $file): Fish
     {
-        //TODO
+        $tmpFile = tempnam(app()->storagePath() . '/tmp', 'catch-the-fish');
+        $file->moveTo($tmpFile);
+
+        try {
+            $file = new UploadedFile(
+                $tmpFile,
+                $file->getClientFilename(),
+                $file->getClientMediaType(),
+                $file->getSize(),
+                $file->getError(),
+                true
+            );
+
+            /**
+             * @var $validator FishImageValidator
+             */
+            $validator = app(FishImageValidator::class);
+
+            $validator->assertValid(['image' => $file]);
+
+            $image = (new ImageManager())->make($tmpFile);
+
+            /**
+             * @var $uploader FishImageUploader
+             */
+            $uploader = app(FishImageUploader::class);
+            $uploader->upload($fish, $image);
+
+            $fish->save();
+        } finally {
+            @unlink($tmpFile);
+        }
+
+        return $fish;
+    }
+
+    /**
+     * @param Round $round
+     * @param UploadedFileInterface[] $files
+     * @return Fish[]
+     */
+    public function bulkImageImport(Round $round, array $files): array
+    {
+        $filesToUnlink = [];
+
+        /**
+         * @var $validator FishImageValidator
+         */
+        $validator = app(FishImageValidator::class);
+
+        /**
+         * @var $uploader FishImageUploader
+         */
+        $uploader = app(FishImageUploader::class);
+
+        $originalNames = [];
+
+        try {
+            return collect($files)->map(function (UploadedFileInterface $file, $index) use (&$filesToUnlink, &$originalNames, $validator) {
+                // First we check and load all files
+                $tmpFile = tempnam(app()->storagePath() . '/tmp', 'catch-the-fish');
+                $file->moveTo($tmpFile);
+                $filesToUnlink[] = $tmpFile;
+
+                $originalNames[$index] = $file->getClientFilename();
+
+                $file = new UploadedFile(
+                    $tmpFile,
+                    $file->getClientFilename(),
+                    $file->getClientMediaType(),
+                    $file->getSize(),
+                    $file->getError(),
+                    true
+                );
+
+                $validator->assertValid(['image' => $file]);
+
+                return (new ImageManager())->make($tmpFile);
+            })->map(function (Image $image, $index) use ($originalNames, $round, $uploader) {
+                // Then we create the fishes and save the images
+                $fish = new Fish();
+
+                $uploader->upload($fish, $image);
+
+                $fish->name = explode('.', $originalNames[$index])[0];
+                $fish->round()->associate($round);
+                Placement::random()->assign($fish);
+                $fish->placement_valid_since = Carbon::now();
+                $fish->save();
+
+                return $fish;
+            })->toArray();
+        } finally {
+            foreach ($filesToUnlink as $tmpFile) {
+                @unlink($tmpFile);
+            }
+        }
     }
 
     /**
@@ -101,6 +206,12 @@ class FishRepository
      */
     public function delete(Fish $fish): void
     {
+        /**
+         * @var $uploader FishImageUploader
+         */
+        $uploader = app(FishImageUploader::class);
+        $uploader->remove($fish);
+
         $fish->delete();
     }
 
@@ -111,9 +222,9 @@ class FishRepository
     public function storeDefaultData(Round $round): void
     {
         /**
-         * @var $storage FilesystemInterface
+         * @var $uploader FishImageUploader
          */
-        $storage = app('catchthefish-assets');
+        $uploader = app(FishImageUploader::class);
 
         /**
          * @var $translator Translator
@@ -123,16 +234,15 @@ class FishRepository
         $now = Carbon::now();
 
         foreach (self::BASE_IMAGES as $index => $originalImagePath) {
-            $imagePath = Str::random() . '.png';
-
-            $storage->put($imagePath, file_get_contents(__DIR__ . '/../../resources/images/' . $originalImagePath));
-
             $fish = new Fish();
+
+            $image = (new ImageManager())->make(__DIR__ . '/../../resources/images/' . $originalImagePath);
+            $uploader->upload($fish, $image);
+
             $fish->round_id = $round->id;
             $fish->name = $translator->trans('clarkwinkelmann-catch-the-fish.api.default-fish-name', [
                 'number' => $index + 1,
             ]);
-            $fish->image = $imagePath;
             Placement::random()->assign($fish);
             $fish->placement_valid_since = $now;
             $fish->save();

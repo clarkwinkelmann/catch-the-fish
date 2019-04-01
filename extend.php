@@ -25,10 +25,12 @@ return [
         ->delete('/catch-the-fish/rounds/{id:[0-9]+}', 'catchthefish.api.rounds.delete', Controllers\RoundDeleteController::class)
         ->get('/catch-the-fish/rounds/{id:[0-9]+}/fishes', 'catchthefish.api.fishes.index', Controllers\FishIndexController::class)
         ->post('/catch-the-fish/rounds/{id:[0-9]+}/fishes', 'catchthefish.api.fishes.store', Controllers\FishStoreController::class)
+        ->post('/catch-the-fish/rounds/{id:[0-9]+}/fishes-from-images', 'catchthefish.api.fishes.store-image', Controllers\FishImageBulkController::class)
         ->patch('/catch-the-fish/fishes/{id:[0-9]+}', 'catchthefish.api.fishes.update', Controllers\FishUpdateController::class)
         ->delete('/catch-the-fish/fishes/{id:[0-9]+}', 'catchthefish.api.fishes.delete', Controllers\FishDeleteController::class)
         ->post('/catch-the-fish/fishes/{id:[0-9]+}/catch', 'catchthefish.api.fishes.catch', Controllers\FishCatchController::class)
         ->post('/catch-the-fish/fishes/{id:[0-9]+}/place', 'catchthefish.api.fishes.place', Controllers\FishPlaceController::class)
+        ->post('/catch-the-fish/fishes/{id:[0-9]+}/image', 'catchthefish.api.fishes.image', Controllers\FishImageController::class)
         ->get('/catch-the-fish/rounds/{id:[0-9]+}/rankings', 'catchthefish.api.rankings.index', Controllers\RankingIndexController::class),
     (new Extend\Locales(__DIR__ . '/resources/locale')),
     new CTFExtend\Policies(),

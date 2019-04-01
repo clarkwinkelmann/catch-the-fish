@@ -6,7 +6,7 @@ import EditFishModal from '../modals/EditFishModal';
 import FishImage from '../components/FishImage';
 import User from "../components/User";
 
-/* global m */
+/* global m, $ */
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-fish.';
 
@@ -24,6 +24,8 @@ export default class RoundSettings extends Page {
             });
         }
 
+        this.uploading = false;
+
         this.refreshFishes();
     }
 
@@ -36,6 +38,47 @@ export default class RoundSettings extends Page {
         }).then(result => {
             this.fishes = app.store.pushPayload(result);
             m.redraw();
+        });
+    }
+
+    // Based on Flarum's AvatarEditor component
+    openPicker(callback, multiple = false) {
+        if (this.uploading) return;
+
+        const $input = $('<input type="file">');
+        $input.attr('multiple', multiple);
+        $input.appendTo('body').hide().click().on('change', e => {
+            callback($(e.target)[0].files);
+        });
+    }
+
+    uploadImages(images, fish) {
+        const data = new FormData();
+
+        if (fish) {
+            data.append('image', images[0]);
+        } else {
+            for (let i = 0; i < images.length; i++) {
+                data.append('image' + i, images[i]);
+            }
+        }
+
+        this.uploading = true;
+        m.redraw();
+
+        app.request({
+            method: 'POST',
+            url: app.forum.attribute('apiUrl') + '/catch-the-fish/' + (fish ? 'fishes/' + fish.id() + '/image' : 'rounds/' + this.roundId + '/fishes-from-images'),
+            serialize: raw => raw,
+            data,
+        }).then(() => {
+            this.uploading = false;
+            m.redraw();
+            this.refreshFishes();
+        }).catch(err => {
+            this.uploading = false;
+            m.redraw();
+            throw err;
         });
     }
 
@@ -59,6 +102,18 @@ export default class RoundSettings extends Page {
                     }));
                 },
                 children: app.translator.trans(translationPrefix + 'new'),
+            }),
+            ' ',
+            Button.component({
+                className: 'Button',
+                type: 'button',
+                onclick: () => {
+                    this.openPicker(files => {
+                        this.uploadImages(files);
+                    }, true);
+                },
+                loading: this.uploading,
+                children: app.translator.trans(translationPrefix + 'new-from-image'),
             }),
             m('table.catchthefish-table', [
                 m('thead', m('tr', [
@@ -93,6 +148,18 @@ export default class RoundSettings extends Page {
                                 }));
                             },
                             children: app.translator.trans(translationPrefix + 'edit'),
+                        }),
+                        ' ',
+                        Button.component({
+                            className: 'Button',
+                            type: 'button',
+                            onclick: () => {
+                                this.openPicker(files => {
+                                    this.uploadImages(files, fish);
+                                });
+                            },
+                            loading: this.uploading,
+                            children: app.translator.trans(translationPrefix + 'upload'),
                         }),
                     ]),
                 ]))),

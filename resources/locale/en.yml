@@ -97,6 +97,8 @@ clarkwinkelmann-catch-the-fish:
             edit: Edit
             no-user-name: Not renamed
             no-user-place: Random
+            upload: Upload new image
+            new-from-image: Create new fishes via bulk image import
 
         table-ranking:
             loading: Loading...
