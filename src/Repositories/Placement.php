@@ -98,7 +98,7 @@ class Placement
             if ($model->last_posted_at->lt(Carbon::now()->subDays(self::settingDiscussionAgeDays()))) {
                 throw new ValidationException([
                     'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'inactive-discussion', [
-                        'days' => self::settingDiscussionAgeDays(),
+                        '{days}' => self::settingDiscussionAgeDays(),
                     ]),
                 ]);
             }
@@ -106,7 +106,7 @@ class Placement
             if ($model->created_at->lt(Carbon::now()->subDays(self::settingPostAgeDays()))) {
                 throw new ValidationException([
                     'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'inactive-post', [
-                        'days' => self::settingDiscussionAgeDays(),
+                        '{days}' => self::settingDiscussionAgeDays(),
                     ]),
                 ]);
             }
@@ -120,7 +120,7 @@ class Placement
             if ($model->last_seen_at->lt(Carbon::now()->subDays(self::settingUserAgeDays()))) {
                 throw new ValidationException([
                     'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'inactive-user', [
-                        'days' => self::settingUserAgeDays(),
+                        '{days}' => self::settingUserAgeDays(),
                     ]),
                 ]);
             }

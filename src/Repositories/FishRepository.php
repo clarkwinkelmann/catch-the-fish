@@ -241,7 +241,7 @@ class FishRepository
 
             $fish->round_id = $round->id;
             $fish->name = $translator->trans('clarkwinkelmann-catch-the-fish.api.default-fish-name', [
-                'number' => $index + 1,
+                '{number}' => $index + 1,
             ]);
             Placement::random()->assign($fish);
             $fish->placement_valid_since = $now;
