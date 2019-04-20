@@ -23,7 +23,7 @@ class FishImageUploader
             $image->orientate();
         }
 
-        $encodedImage = $image->resize(300, 300, function (Constraint $size) {
+        $encodedImage = $image->resize(300, 200, function (Constraint $size) {
             $size->aspectRatio();
             $size->upsize();
         })->encode('png');
