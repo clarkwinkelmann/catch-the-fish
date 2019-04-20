@@ -109,8 +109,11 @@ class PlacementRepository
      */
     public function place(User $actor, Fish $fish, array $attributes): Fish
     {
+        // Need to clone fish otherwise policy checks in second block are impacted by the changes in first block
+        $fishBeforeUpdate = clone $fish;
+
         if (array_has($attributes, 'placement')) {
-            $this->assertCan($actor, 'place', $fish);
+            $this->assertCan($actor, 'place', $fishBeforeUpdate);
 
             if (array_get($attributes, 'placement') !== 'random') {
                 $placement = new Placement();
@@ -129,7 +132,7 @@ class PlacementRepository
         }
 
         if (array_has($attributes, 'name')) {
-            $this->assertCan($actor, 'name', $fish);
+            $this->assertCan($actor, 'name', $fishBeforeUpdate);
 
             /**
              * @var $validator FishValidator
@@ -142,7 +145,7 @@ class PlacementRepository
 
             // If the user can only rename fishes, after rename we immediately release the fish
             // If the user can place fishes, he's free to rename the fish as many times as he want before placing it
-            if (!$actor->can('place', $fish)) {
+            if (!$actor->can('place', $fishBeforeUpdate)) {
                 $fish->placement_valid_since = Carbon::now();
             }
         }
