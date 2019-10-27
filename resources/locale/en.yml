@@ -52,7 +52,7 @@ clarkwinkelmann-catch-the-fish:
 
         edit-fish:
             name: Name
-            name-help: The current name of the fish. Can be edited by players if they have the permission to rename fishes
+            name-help: The current name of the fish. Can be edited by players if they have the permission to rename fishes.
             create: Create fish
             save: Save fish
             delete: Delete fish
@@ -136,22 +136,22 @@ clarkwinkelmann-catch-the-fish:
 
     api:
         default-fish-name: "Fish #{number}"
-        wrong-catch-placement: There is no fish here. Maybe you weren't quick enough and someone else got it first
-        too-many-placement-models: Only one placement is possible at a time
-        invalid-discussion-id: Discussion doesn't seem to exist, maybe it was recently deleted
-        invalid-post-id: Post doesn't seem to exist, maybe it was recently deleted
-        invalid-user-id: User doesn't seem to exist, maybe it was recently deleted
-        model-deleted: Can't place fish on a deleted discussion or post
-        model-private: Can't place fish on a private discussion or post
-        inactive-discussion: Can't place fish on discussion inactive for more than {days} days
-        inactive-post: Can't place fish on post created more than {days} days ago
-        inactive-user: Can't place fish on user inactive for more than {days} days
-        non-comment-post: Can only place fishes on comment posts
-        user-suspended: Can't place fish on a suspended user
-        random-error: Could not generate a random fish placement
-        cannot-catch-own-fish: You cannot catch a fish you placed yourself
-        cannot-catch-hold-fish: The previous catcher needs to release the fish before you can catch it
-        fish-update-wrong-user: You can no longer edit this fish. Somebody else has probably caught it
-        fish-update-expired: Too late, you can no longer edit this fish. It has automatically been placed somewhere in the meantime
-        round-not-started: This round has not started
-        round-finished: This round is finished
+        wrong-catch-placement: There is no fish here. Maybe you weren't quick enough and someone else got it first.
+        too-many-placement-models: Only one placement is possible at a time.
+        invalid-discussion-id: Discussion doesn't seem to exist, maybe it was recently deleted.
+        invalid-post-id: Post doesn't seem to exist, maybe it was recently deleted.
+        invalid-user-id: User doesn't seem to exist, maybe it was recently deleted.
+        model-deleted: Can't place fish on a deleted discussion or post.
+        model-private: Can't place fish on a private discussion or post.
+        inactive-discussion: Can't place fish on discussion inactive for more than {days} days.
+        inactive-post: Can't place fish on post created more than {days} days ago.
+        inactive-user: Can't place fish on user inactive for more than {days} days.
+        non-comment-post: Can only place fishes on comment posts.
+        user-suspended: Can't place fish on a suspended user.
+        random-error: Could not generate a random fish placement.
+        cannot-catch-own-fish: You cannot catch a fish you placed yourself.
+        cannot-catch-hold-fish: The previous catcher needs to release the fish before you can catch it.
+        fish-update-wrong-user: You can no longer edit this fish. Somebody else has probably caught it.
+        fish-update-expired: Too late, you can no longer edit this fish. It has automatically been placed somewhere in the meantime.
+        round-not-started: This round has not started.
+        round-finished: This round is finished.
