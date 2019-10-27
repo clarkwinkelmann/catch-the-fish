@@ -24,10 +24,10 @@ clarkwinkelmann-catch-the-fish:
             title: Edit Fish "{name}"
 
         caught-fish-modal:
-            title: You caught a fish !
+            title: You caught a fish!
             named-by: Named by
             placed-by: Placed by
-            congratulation: Congratulation, you caught a fish ! You have caught {catch_count} fishes.
+            congratulation: Congratulation, you caught a fish! You have caught {catch_count} fishes.
             name: Fish name
             name-help: You can rename the fish if you want. The name must respect the forum guidelines.
             placement-help: You can hide the fish where you want on the forum in recent discussions and active user profiles. You cannot catch a fish you placed yourself.
@@ -48,7 +48,7 @@ clarkwinkelmann-catch-the-fish:
             create: Create round
             save: Save round
             delete: Delete round
-            delete-confirmation: Delete round "{name}" ?
+            delete-confirmation: Delete round "{name}"?
 
         edit-fish:
             name: Name
@@ -56,7 +56,7 @@ clarkwinkelmann-catch-the-fish:
             create: Create fish
             save: Save fish
             delete: Delete fish
-            delete-confirmation: Delete fish "{name}" ?
+            delete-confirmation: Delete fish "{name}"?
 
         moving-fish:
             login: Login to catch fishes
