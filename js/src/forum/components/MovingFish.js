@@ -1,21 +1,18 @@
 import app from 'flarum/app';
 import classList from 'flarum/utils/classList';
-import Component from 'flarum/Component';
 import FishImage from './FishImage';
 import CaughtFishModal from '../modals/CaughtFishModal';
 
 /* global m */
 
-export default class MovingFish extends Component {
+export default class MovingFish {
     init() {
-        super.init();
-
         this.reverseAnimation = Math.random() > 0.5;
         this.animationDuration = 5 + (Math.floor(Math.random() * 70) / 10) + 's';
     }
 
-    view() {
-        const {fish} = this.props;
+    view(vnode) {
+        const {fish} = vnode.attrs;
 
         return m('.catchthefish-moving-fish', {
             className: classList({
@@ -34,21 +31,21 @@ export default class MovingFish extends Component {
                 app.request({
                     method: 'POST',
                     url: app.forum.attribute('apiUrl') + '/catch-the-fish/fishes/' + fish.id() + '/catch',
-                    data: fish.placement(),
+                    body: fish.placement(),
                 }).then(result => {
-                    app.modal.show(new CaughtFishModal({
+                    app.modal.show(CaughtFishModal, {
                         fish: app.store.pushPayload(result),
-                    }));
+                    });
 
                     // So the parent can remove the fish from the relationship
-                    if (this.props.oncatch) {
-                        this.props.oncatch();
+                    if (vnode.attrs.oncatch) {
+                        vnode.attrs.oncatch();
                     }
                 });
             },
         }, [
             m('.catchthefish-name', fish.name()),
-            FishImage.component({
+            m(FishImage, {
                 fish,
                 animationDuration: this.animationDuration,
             }),

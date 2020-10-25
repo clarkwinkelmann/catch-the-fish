@@ -27,13 +27,17 @@ class ForumRelationship implements ExtenderInterface
 
     public function loadRelationship(WillSerializeData $event)
     {
-        /**
-         * @var $rounds RoundRepository
-         */
-        $rounds = app(RoundRepository::class);
+        if ($event->isController(ShowForumController::class)) {
+            if ($event->actor->can('catchthefish.visible')) {
+                /**
+                 * @var $rounds RoundRepository
+                 */
+                $rounds = app(RoundRepository::class);
 
-        if ($event->isController(ShowForumController::class) && $event->actor->can('catchthefish.visible')) {
-            $event->data['catchTheFishActiveRounds'] = $rounds->allActive();
+                $event->data['catchTheFishActiveRounds'] = $rounds->allActive();
+            } else {
+                $event->data['catchTheFishActiveRounds'] = [];
+            }
         }
     }
 

@@ -6,6 +6,8 @@ import DiscussionHero from 'flarum/components/DiscussionHero';
 import DropArea from './components/DropArea';
 import MovingFish from './components/MovingFish';
 
+/* global m */
+
 function fishIdFromEvent(event) {
     const data = event.dataTransfer.getData("text/plain");
 
@@ -18,7 +20,7 @@ function movingFishContent(dragover, model) {
     const content = [];
 
     if (dragover) {
-        content.push(DropArea.component());
+        content.push(m(DropArea));
     }
 
     const fishes = model.catchTheFishFishes();
@@ -30,7 +32,7 @@ function movingFishContent(dragover, model) {
             }
 
             // Remove fish from relationship
-            content.push(MovingFish.component({
+            content.push(m(MovingFish, {
                 fish,
                 oncatch: () => {
                     model.pushData({
@@ -60,12 +62,12 @@ function addDropAttrs(attrs, modelProperty) {
 
             if (fish) {
                 const placement = {};
-                placement[modelProperty + '_id'] = this.props[modelProperty].id();
+                placement[modelProperty + '_id'] = this.attrs[modelProperty].id();
 
                 app.request({
                     method: 'POST',
                     url: app.forum.attribute('apiUrl') + '/catch-the-fish/fishes/' + fish.id() + '/place',
-                    data: {
+                    body: {
                         placement,
                     },
                 }).then(result => {
@@ -101,15 +103,15 @@ function addDropAttrs(attrs, modelProperty) {
 function addAreaToComponent(component, viewName, modelProperty) {
     if (viewName === 'content') {
         override(component, viewName, function (content) {
-            return content().concat(movingFishContent(this.fishDragOver, this.props[modelProperty]));
+            return content().concat(movingFishContent(this.fishDragOver, this.attrs[modelProperty]));
         });
     } else {
         extend(component, viewName, function (items) {
-            items.add('catchthefish-fish-and-drop', movingFishContent(this.fishDragOver, this.props[modelProperty]));
+            items.add('catchthefish-fish-and-drop', movingFishContent(this.fishDragOver, this.attrs[modelProperty]));
         });
     }
 
-    extend(component, 'init', function () {
+    extend(component, 'oninit', function () {
         this.fishDragOver = false;
 
         // Add a condition to the post tree retainer
@@ -120,7 +122,7 @@ function addAreaToComponent(component, viewName, modelProperty) {
 
     if (viewName === 'content') {
         // CommentPost has an attrs() method we can extend
-        extend(component, 'attrs', function (attrs) {
+        extend(component, 'elementAttrs', function (attrs) {
             addDropAttrs.bind(this)(attrs, modelProperty);
         });
     } else {

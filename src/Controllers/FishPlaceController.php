@@ -8,6 +8,7 @@ use ClarkWinkelmann\CatchTheFish\Repositories\PlacementRepository;
 use ClarkWinkelmann\CatchTheFish\Serializers\FishSerializer;
 use Flarum\Api\Controller\AbstractShowController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
@@ -35,7 +36,7 @@ class FishPlaceController extends AbstractShowController
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $id = array_get($request->getQueryParams(), 'id');
+        $id = Arr::get($request->getQueryParams(), 'id');
 
         $fish = $this->fishes->findOrFail($id);
 

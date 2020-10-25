@@ -1,46 +1,43 @@
 import app from 'flarum/app';
-import Component from 'flarum/Component';
 import Button from 'flarum/components/Button';
 import Switch from 'flarum/components/Switch';
+import extractText from 'flarum/utils/extractText';
+import withAttr from 'flarum/utils/withAttr';
 
-/* global m */
+/* global m, dayjs */
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.edit-round.';
 
-export default class EditRound extends Component {
-    init() {
-        this.round = this.props.round;
+export default class EditRound {
+    oninit(vnode) {
+        this.round = vnode.attrs.round;
         this.dirty = false;
         this.processing = false;
 
         if (typeof this.round === 'undefined') {
-            this.initNewRecord();
+            this.round = app.store.createRecord('catchthefish-rounds', {
+                attributes: {
+                    name: '',
+                    starts_at: '',
+                    ends_at: dayjs().add(1, 'day').toISOString(),
+                    include_starting_pack: true,
+                },
+            });
         }
     }
 
-    initNewRecord() {
-        this.round = app.store.createRecord('catchthefish-rounds', {
-            attributes: {
-                name: '',
-                starts_at: '',
-                ends_at: moment().add(1, 'day').toISOString(),
-                include_starting_pack: true,
-            },
-        });
-    }
-
-    view() {
+    view(vnode) {
         return m('form', {
             onsubmit: event => {
                 event.preventDefault();
-                this.saveRecord();
+                this.saveRecord(vnode);
             },
         }, [
             m('.Form-group', [
                 m('label', app.translator.trans(translationPrefix + 'name')),
                 m('input.FormControl', {
                     value: this.round.name(),
-                    oninput: m.withAttr('value', this.updateAttribute.bind(this, 'name')),
+                    oninput: withAttr('value', this.updateAttribute.bind(this, 'name')),
                 }),
                 m('.helpText', app.translator.trans(translationPrefix + 'name-help')),
             ]),
@@ -48,14 +45,14 @@ export default class EditRound extends Component {
                 m('label', app.translator.trans(translationPrefix + 'starts-at')),
                 m('input.FormControl', {
                     value: this.round.starts_at(),
-                    oninput: m.withAttr('value', this.updateAttribute.bind(this, 'starts_at')),
+                    oninput: withAttr('value', this.updateAttribute.bind(this, 'starts_at')),
                 }),
             ]),
             m('.Form-group', [
                 m('label', app.translator.trans(translationPrefix + 'ends-at')),
                 m('input.FormControl', {
                     value: this.round.ends_at(),
-                    oninput: m.withAttr('value', this.updateAttribute.bind(this, 'ends_at')),
+                    oninput: withAttr('value', this.updateAttribute.bind(this, 'ends_at')),
                 }),
             ]),
             this.round.exists ? '' : m('.Form-group', [
@@ -63,8 +60,7 @@ export default class EditRound extends Component {
                     Switch.component({
                         state: this.round.include_starting_pack(),
                         onchange: this.updateAttribute.bind(this, 'include_starting_pack'),
-                        children: app.translator.trans(translationPrefix + 'starting-pack'),
-                    }),
+                    }, app.translator.trans(translationPrefix + 'starting-pack')),
                 ]),
                 m('.helpText', app.translator.trans(translationPrefix + 'starting-pack-help')),
             ]),
@@ -72,18 +68,17 @@ export default class EditRound extends Component {
                 Button.component({
                     type: 'submit',
                     className: 'Button Button--primary',
-                    children: app.translator.trans(translationPrefix + (this.round.exists ? 'save' : 'create')),
                     loading: this.processing,
                     disabled: !this.readyToSave(),
-                    onclick: this.saveRecord.bind(this),
-                }),
+                }, app.translator.trans(translationPrefix + (this.round.exists ? 'save' : 'create'))),
                 (this.round.exists ? Button.component({
                     type: 'button',
                     className: 'Button Button--danger',
-                    children: app.translator.trans(translationPrefix + 'delete'),
                     loading: this.processing,
-                    onclick: this.deleteRecord.bind(this),
-                }) : ''),
+                    onclick: () => {
+                        this.deleteRecord(vnode);
+                    },
+                }, app.translator.trans(translationPrefix + 'delete')) : ''),
             ]),
         ]);
     }
@@ -104,12 +99,12 @@ export default class EditRound extends Component {
         return this.dirty;
     }
 
-    saveRecord() {
+    saveRecord(vnode) {
         this.processing = true;
 
         this.round.save(this.round.data.attributes).then(() => {
-            if (this.props.onsave) {
-                this.props.onsave();
+            if (vnode.attrs.onsave) {
+                vnode.attrs.onsave();
             }
 
             this.processing = false;
@@ -122,18 +117,18 @@ export default class EditRound extends Component {
         });
     }
 
-    deleteRecord() {
-        if (!confirm(app.translator.trans(translationPrefix + 'delete-confirmation', {
+    deleteRecord(vnode) {
+        if (!confirm(extractText(app.translator.trans(translationPrefix + 'delete-confirmation', {
             name: this.round.name(),
-        }).join(''))) {
+        })))) {
             return;
         }
 
         this.processing = true;
 
         this.round.delete().then(() => {
-            if (this.props.ondelete) {
-                this.props.ondelete();
+            if (vnode.attrs.ondelete) {
+                vnode.attrs.ondelete();
             }
 
             this.processing = false;

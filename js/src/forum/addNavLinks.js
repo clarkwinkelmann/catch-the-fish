@@ -10,17 +10,15 @@ export default function () {
         if (app.forum.catchTheFishCanSeeRankingsPage()) {
             items.add('catchthefish-rankings', LinkButton.component({
                 icon: 'fas fa-fish',
-                children: app.translator.trans(translationPrefix + 'rankings'),
                 href: app.route('catchTheFishRankings'),
-            }));
+            }, app.translator.trans(translationPrefix + 'rankings')));
         }
 
         if (app.forum.catchTheFishCanModerate()) {
             items.add('catchthefish-settings', LinkButton.component({
                 icon: 'fas fa-fish',
-                children: app.translator.trans(translationPrefix + 'settings'),
                 href: app.route('catchTheFishRounds'),
-            }));
+            }, app.translator.trans(translationPrefix + 'settings')));
         }
     });
 }

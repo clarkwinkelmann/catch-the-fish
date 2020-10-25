@@ -9,10 +9,10 @@ import User from "../components/User";
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.caught-fish-modal.';
 
 export default class CaughtFishModal extends Modal {
-    init() {
-        super.init();
+    oninit(vnode) {
+        super.oninit(vnode);
 
-        this.newName = m.prop(this.props.fish.name());
+        this.newName = this.attrs.fish.name();
         this.dirty = false;
         this.loading = false;
     }
@@ -26,28 +26,28 @@ export default class CaughtFishModal extends Modal {
     }
 
     saveNameAndPlacement(randomPlacement = false) {
-        const data = {};
+        const body = {};
 
         if (this.dirty) {
-            data.name = this.newName();
+            body.name = this.newName;
         }
 
         if (randomPlacement) {
-            data.placement = 'random';
+            body.placement = 'random';
         }
 
-        if (data) {
+        if (body) {
             this.loading = true;
 
             app.request({
                 method: 'POST',
-                url: app.forum.attribute('apiUrl') + '/catch-the-fish/fishes/' + this.props.fish.id() + '/place',
-                data,
+                url: app.forum.attribute('apiUrl') + '/catch-the-fish/fishes/' + this.attrs.fish.id() + '/place',
+                body,
             }).then(result => {
                 app.store.pushPayload(result);
                 this.hide();
 
-                if (this.props.fish.canPlace() && !randomPlacement) {
+                if (this.attrs.fish.canPlace() && !randomPlacement) {
                     // Refresh basket by reloading user
                     app.store.find('users', app.session.user.id()).then(() => {
                         m.redraw();
@@ -61,7 +61,7 @@ export default class CaughtFishModal extends Modal {
         } else {
             this.hide();
 
-            if (this.props.fish.canPlace() && !randomPlacement) {
+            if (this.attrs.fish.canPlace() && !randomPlacement) {
                 // Refresh basket by reloading user
                 app.store.find('users', app.session.user.id()).then(() => {
                     m.redraw();
@@ -71,27 +71,27 @@ export default class CaughtFishModal extends Modal {
     }
 
     content() {
-        const {fish} = this.props;
+        const {fish} = this.attrs;
 
         const namedBy = fish.namedBy();
         const placedBy = fish.placedBy();
 
         return m('.Modal-body', [
-            m('h3','"' + fish.name() + '"'),
-            FishImage.component({
+            m('h3', '"' + fish.name() + '"'),
+            m(FishImage, {
                 fish,
             }),
             namedBy ? m('p', [
                 app.translator.trans(translationPrefix + 'named-by'),
                 ' ',
-                User.component({
+                m(User, {
                     user: namedBy,
                 }),
             ]) : null,
             placedBy ? m('p', [
                 app.translator.trans(translationPrefix + 'placed-by'),
                 ' ',
-                User.component({
+                m(User, {
                     user: placedBy,
                 }),
             ]) : null,
@@ -102,9 +102,9 @@ export default class CaughtFishModal extends Modal {
                 m('p', app.translator.trans(translationPrefix + 'name-help')),
                 m('label', app.translator.trans(translationPrefix + 'name')),
                 m('input.FormControl', {
-                    value: this.newName(),
+                    value: this.newName,
                     oninput: m.withAttr('value', value => {
-                        this.newName(value);
+                        this.newName = value;
                         this.dirty = true;
                     }),
                 }),
@@ -114,20 +114,18 @@ export default class CaughtFishModal extends Modal {
                 className: 'Button Button--primary Button--block',
                 type: 'button',
                 loading: this.loading,
-                children: app.translator.trans(translationPrefix + (this.dirty ? (fish.canPlace() ? 'submit-name-place-later' : 'submit-name') : (fish.canPlace() ? 'submit-place-later' : 'submit-continue'))),
                 onclick: () => {
                     this.saveNameAndPlacement();
                 },
-            })),
+            }, app.translator.trans(translationPrefix + (this.dirty ? (fish.canPlace() ? 'submit-name-place-later' : 'submit-name') : (fish.canPlace() ? 'submit-place-later' : 'submit-continue'))))),
             fish.canPlace() ? m('.Form-group', Button.component({
                 className: 'Button Button--primary Button--block',
                 type: 'button',
                 loading: this.loading,
-                children: app.translator.trans(translationPrefix + (this.dirty ? 'submit-name-place-random' : 'submit-place-random')),
                 onclick: () => {
                     this.saveNameAndPlacement(true);
                 },
-            })) : null,
+            }, app.translator.trans(translationPrefix + (this.dirty ? 'submit-name-place-random' : 'submit-place-random')))) : null,
         ]);
     }
 

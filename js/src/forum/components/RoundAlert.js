@@ -1,43 +1,22 @@
 import app from 'flarum/app';
-import Component from 'flarum/Component';
-import Alert from 'flarum/components/Alert';
 import LinkButton from 'flarum/components/LinkButton';
 
-/* global m, moment */
+/* global m, dayjs */
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.round-alert.';
 
-class AlertWithContainer extends Alert {
-    view() {
-        const vdom = super.view();
-
-        vdom.children = [
-            m('.container', vdom.children),
-        ];
-
-        return vdom;
-    }
-}
-
-export default class UpdateAlert extends Component {
-    view() {
-        return AlertWithContainer.component({
-            type: 'info',
-            children: [
+export default class UpdateAlert {
+    view(vnode) {
+        return m('.Alert.Alert-info', m('.container', [
+            m('span.Alert-body', [
                 app.translator.trans(translationPrefix + 'message', {
-                    name: this.props.round.name(),
-                    time: moment(this.props.round.ends_at()).calendar(),
+                    name: vnode.attrs.round.name(),
+                    time: dayjs(vnode.attrs.round.ends_at()).calendar(),
                 }),
-                app.forum.catchTheFishCanSeeRankingsPage() ? [
-                    ' ',
-                    LinkButton.component({
-                        className: 'Button',
-                        children: app.translator.trans(translationPrefix + 'rankings'),
-                        href: app.route('catchTheFishRankings'),
-                    }),
-                ] : null,
-            ],
-            dismissible: false,
-        });
+            ]),
+            app.forum.catchTheFishCanSeeRankingsPage() ? m('ul.Alert-controls', m('li', LinkButton.component({
+                href: app.route('catchTheFishRankings'),
+            }, app.translator.trans(translationPrefix + 'rankings')))) : null,
+        ]));
     }
 }

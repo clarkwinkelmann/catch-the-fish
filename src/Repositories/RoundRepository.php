@@ -8,6 +8,7 @@ use ClarkWinkelmann\CatchTheFish\Validators\RoundValidator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 
 class RoundRepository
@@ -37,13 +38,13 @@ class RoundRepository
 
     protected function parseAttributes(array $attributes): array
     {
-        $return = array_only($attributes, 'name');
+        $return = Arr::only($attributes, 'name');
 
-        if (array_has($attributes, 'starts_at')) {
+        if (Arr::has($attributes, 'starts_at')) {
             $return['starts_at'] = Carbon::parse($attributes['starts_at']);
         }
 
-        if (array_has($attributes, 'ends_at')) {
+        if (Arr::has($attributes, 'ends_at')) {
             $return['ends_at'] = Carbon::parse($attributes['ends_at']);
         }
 
@@ -68,7 +69,7 @@ class RoundRepository
         $round = new Round($this->parseAttributes($attributes));
         $round->save();
 
-        if (array_get($attributes, 'include_starting_pack')) {
+        if (Arr::get($attributes, 'include_starting_pack')) {
             /**
              * @var $fishes FishRepository
              */

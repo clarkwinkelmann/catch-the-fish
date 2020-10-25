@@ -11,8 +11,8 @@ import User from "../components/User";
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-fish.';
 
 export default class RoundSettings extends Page {
-    init() {
-        super.init();
+    oninit(vnode) {
+        super.oninit(vnode);
 
         this.roundId = m.route.param('id');
         this.round = app.store.getById('catchthefish-round', this.roundId);
@@ -53,13 +53,13 @@ export default class RoundSettings extends Page {
     }
 
     uploadImages(images, fish) {
-        const data = new FormData();
+        const body = new FormData();
 
         if (fish) {
-            data.append('image', images[0]);
+            body.append('image', images[0]);
         } else {
             for (let i = 0; i < images.length; i++) {
-                data.append('image' + i, images[i]);
+                body.append('image' + i, images[i]);
             }
         }
 
@@ -70,7 +70,7 @@ export default class RoundSettings extends Page {
             method: 'POST',
             url: app.forum.attribute('apiUrl') + '/catch-the-fish/' + (fish ? 'fishes/' + fish.id() + '/image' : 'rounds/' + this.roundId + '/fishes-from-images'),
             serialize: raw => raw,
-            data,
+            body,
         }).then(() => {
             this.uploading = false;
             m.redraw();
@@ -94,15 +94,14 @@ export default class RoundSettings extends Page {
             Button.component({
                 className: 'Button Button--primary',
                 onclick: () => {
-                    app.modal.show(new NewFishModal({
+                    app.modal.show(NewFishModal, {
                         round: this.round,
                         oncreateordelete: () => {
                             this.refreshFishes();
                         },
-                    }));
+                    });
                 },
-                children: app.translator.trans(translationPrefix + 'new'),
-            }),
+            }, app.translator.trans(translationPrefix + 'new')),
             ' ',
             Button.component({
                 className: 'Button',
@@ -113,8 +112,7 @@ export default class RoundSettings extends Page {
                     }, true);
                 },
                 loading: this.uploading,
-                children: app.translator.trans(translationPrefix + 'new-from-image'),
-            }),
+            }, app.translator.trans(translationPrefix + 'new-from-image')),
             m('table.catchthefish-table', [
                 m('thead', m('tr', [
                     m('th', app.translator.trans(translationPrefix + 'image')),
@@ -126,29 +124,28 @@ export default class RoundSettings extends Page {
                 m('tbody', this.fishes.length === 0 ? m('tr', [
                     m('td', 'No fishes'),
                 ]) : this.fishes.map(fish => m('tr', [
-                    m('td', FishImage.component({
+                    m('td', m(FishImage, {
                         fish,
                     })),
                     m('td', fish.name()),
-                    m('td', fish.namedBy() ? User.component({
+                    m('td',  fish.namedBy() ? m(User, {
                         user: fish.namedBy(),
                     }) : m('em', app.translator.trans(translationPrefix + 'no-user-name'))),
-                    m('td', fish.placedBy() ? User.component({
+                    m('td', fish.placedBy() ? m(User, {
                         user: fish.placedBy(),
                     }) : m('em', app.translator.trans(translationPrefix + 'no-user-place'))),
                     m('td', [
                         Button.component({
                             className: 'Button',
                             onclick: () => {
-                                app.modal.show(new EditFishModal({
+                                app.modal.show(EditFishModal, {
                                     fish,
                                     oncreateordelete: () => {
                                         this.refreshFishes();
                                     },
-                                }));
+                                });
                             },
-                            children: app.translator.trans(translationPrefix + 'edit'),
-                        }),
+                        }, app.translator.trans(translationPrefix + 'edit')),
                         ' ',
                         Button.component({
                             className: 'Button',
@@ -159,8 +156,7 @@ export default class RoundSettings extends Page {
                                 });
                             },
                             loading: this.uploading,
-                            children: app.translator.trans(translationPrefix + 'upload'),
-                        }),
+                        }, app.translator.trans(translationPrefix + 'upload')),
                     ]),
                 ]))),
             ]),

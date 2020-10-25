@@ -5,14 +5,12 @@ namespace ClarkWinkelmann\CatchTheFish\Controllers;
 use ClarkWinkelmann\CatchTheFish\Repositories\FishRepository;
 use ClarkWinkelmann\CatchTheFish\Serializers\FishSerializer;
 use Flarum\Api\Controller\AbstractShowController;
-use Flarum\User\AssertPermissionTrait;
+use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
 class FishImageController extends AbstractShowController
 {
-    use AssertPermissionTrait;
-
     public $serializer = FishSerializer::class;
 
     protected $fishes;
@@ -31,13 +29,13 @@ class FishImageController extends AbstractShowController
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $id = array_get($request->getQueryParams(), 'id');
+        $id = Arr::get($request->getQueryParams(), 'id');
 
         $fish = $this->fishes->findOrFail($id);
 
-        $this->assertCan($request->getAttribute('actor'), 'update', $fish);
+        $request->getAttribute('actor')->assertCan('update', $fish);
 
-        $file = array_get($request->getUploadedFiles(), 'image');
+        $file = Arr::get($request->getUploadedFiles(), 'image');
 
         return $this->fishes->updateImage($fish, $file);
     }

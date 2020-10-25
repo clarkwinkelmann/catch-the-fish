@@ -10,8 +10,8 @@ import EditRoundModal from '../modals/EditRoundModal';
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-round.';
 
 export default class RoundList extends Page {
-    init() {
-        super.init();
+    oninit(vnode) {
+        super.oninit(vnode);
 
         this.refreshRounds();
     }
@@ -38,14 +38,13 @@ export default class RoundList extends Page {
             Button.component({
                 className: 'Button Button--primary',
                 onclick: () => {
-                    app.modal.show(new NewRoundModal({
+                    app.modal.show(NewRoundModal, {
                         oncreateordelete: () => {
                             this.refreshRounds();
                         },
-                    }));
+                    });
                 },
-                children: app.translator.trans(translationPrefix + 'new'),
-            }),
+            }, app.translator.trans(translationPrefix + 'new')),
             m('table.catchthefish-table', [
                 m('thead', m('tr', [
                     m('th', app.translator.trans(translationPrefix + 'name')),
@@ -61,23 +60,21 @@ export default class RoundList extends Page {
                         Button.component({
                             className: 'Button',
                             onclick: () => {
-                                app.modal.show(new EditRoundModal({
+                                app.modal.show(EditRoundModal, {
                                     round,
                                     oncreateordelete: () => {
                                         this.refreshRounds();
                                     },
-                                }));
+                                });
                             },
-                            children: app.translator.trans(translationPrefix + 'edit'),
-                        }),
+                        }, app.translator.trans(translationPrefix + 'edit')),
                         ' ',
                         LinkButton.component({
                             className: 'Button',
                             href: app.route('catchTheFishRound', {
                                 id: round.id(),
                             }),
-                            children: app.translator.trans(translationPrefix + 'fishes'),
-                        }),
+                        }, app.translator.trans(translationPrefix + 'fishes')),
                     ]),
                 ]))),
             ]),

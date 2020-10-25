@@ -1,43 +1,45 @@
 import app from 'flarum/app';
-import Component from 'flarum/Component';
 import Button from 'flarum/components/Button';
+import extractText from 'flarum/utils/extractText';
 
 /* global m */
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.edit-fish.';
 
-export default class EditFish extends Component {
-    init() {
-        this.fish = this.props.fish;
+export default class EditFish {
+    oninit(vnode) {
+        this.fish = vnode.attrs.fish;
         this.dirty = false;
         this.processing = false;
 
         if (typeof this.fish === 'undefined') {
-            this.initNewRecord();
+            this.fish = app.store.createRecord('catchthefish-fishes', {
+                attributes: {
+                    round_id: vnode.attrs.round.id(),
+                    name: '',
+                },
+            });
         }
     }
 
-    initNewRecord() {
-        this.fish = app.store.createRecord('catchthefish-fishes', {
-            attributes: {
-                round_id: this.props.round.id(),
-                name: '',
-            },
-        });
-    }
-
-    view() {
+    view(vnode) {
         return m('form', {
             onsubmit: event => {
                 event.preventDefault();
-                this.saveRecord();
+                this.saveRecord(vnode);
             },
         }, [
             m('.Form-group', [
                 m('label', app.translator.trans(translationPrefix + 'name')),
                 m('input.FormControl', {
                     value: this.fish.name(),
-                    oninput: m.withAttr('value', this.updateAttribute.bind(this, 'name')),
+                    oninput: event => {
+                        this.fish.pushAttributes({
+                            name: event.target.value,
+                        });
+
+                        this.dirty = true;
+                    },
                 }),
                 m('.helpText', app.translator.trans(translationPrefix + 'name-help')),
             ]),
@@ -45,28 +47,19 @@ export default class EditFish extends Component {
                 Button.component({
                     type: 'submit',
                     className: 'Button Button--primary',
-                    children: app.translator.trans(translationPrefix + (this.fish.exists ? 'save' : 'create')),
                     loading: this.processing,
                     disabled: !this.readyToSave(),
-                    onclick: this.saveRecord.bind(this),
-                }),
+                }, app.translator.trans(translationPrefix + (this.fish.exists ? 'save' : 'create'))),
                 (this.fish.exists ? Button.component({
                     type: 'button',
                     className: 'Button Button--danger',
-                    children: app.translator.trans(translationPrefix + 'delete'),
                     loading: this.processing,
-                    onclick: this.deleteRecord.bind(this),
-                }) : ''),
+                    onclick: () => {
+                        this.deleteRecord(vnode);
+                    },
+                }, app.translator.trans(translationPrefix + 'delete')) : ''),
             ]),
         ]);
-    }
-
-    updateAttribute(attribute, value) {
-        this.fish.pushAttributes({
-            [attribute]: value,
-        });
-
-        this.dirty = true;
     }
 
     readyToSave() {
@@ -77,12 +70,12 @@ export default class EditFish extends Component {
         return this.dirty;
     }
 
-    saveRecord() {
+    saveRecord(vnode) {
         this.processing = true;
 
         this.fish.save(this.fish.data.attributes).then(() => {
-            if (this.props.onsave) {
-                this.props.onsave();
+            if (vnode.attrs.onsave) {
+                vnode.attrs.onsave();
             }
 
             this.processing = false;
@@ -95,18 +88,18 @@ export default class EditFish extends Component {
         });
     }
 
-    deleteRecord() {
-        if (!confirm(app.translator.trans(translationPrefix + 'delete-confirmation', {
+    deleteRecord(vnode) {
+        if (!confirm(extractText(app.translator.trans(translationPrefix + 'delete-confirmation', {
             name: this.fish.name(),
-        }).join(''))) {
+        })))) {
             return;
         }
 
         this.processing = true;
 
         this.fish.delete().then(() => {
-            if (this.props.ondelete) {
-                this.props.ondelete();
+            if (vnode.attrs.ondelete) {
+                vnode.attrs.ondelete();
             }
 
             this.processing = false;

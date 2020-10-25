@@ -16,7 +16,7 @@ export default class Rankings extends Page {
 
         return m('.container', [
             m('h2', app.translator.trans(translationPrefix + 'title')),
-            rounds ? rounds.map(round => RoundRankings.component({
+            rounds ? rounds.map(round => m(RoundRankings, {
                 round,
             })) : m('p', app.translator.trans(translationPrefix + 'nothing')),
         ]);

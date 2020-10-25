@@ -6,16 +6,19 @@ use ClarkWinkelmann\CatchTheFish\Repositories\FishRepository;
 use ClarkWinkelmann\CatchTheFish\Repositories\RoundRepository;
 use ClarkWinkelmann\CatchTheFish\Serializers\FishSerializer;
 use Flarum\Api\Controller\AbstractListController;
-use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
+use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
 class FishIndexController extends AbstractListController
 {
-    use AssertPermissionTrait;
-
     public $serializer = FishSerializer::class;
+
+    public $include = [
+        'lastUserPlacement',
+        'lastUserNaming',
+    ];
 
     protected $rounds;
     protected $fishes;
@@ -34,11 +37,11 @@ class FishIndexController extends AbstractListController
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $roundId = array_get($request->getQueryParams(), 'id');
+        $roundId = Arr::get($request->getQueryParams(), 'id');
 
         $round = $this->rounds->findOrFail($roundId);
 
-        $this->assertCan($request->getAttribute('actor'), 'listFishes', $round);
+        $request->getAttribute('actor')->assertCan('listFishes', $round);
 
         return $this->fishes->all($round);
     }

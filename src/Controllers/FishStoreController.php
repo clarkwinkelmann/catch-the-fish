@@ -7,15 +7,13 @@ use ClarkWinkelmann\CatchTheFish\Repositories\FishRepository;
 use ClarkWinkelmann\CatchTheFish\Repositories\RoundRepository;
 use ClarkWinkelmann\CatchTheFish\Serializers\FishSerializer;
 use Flarum\Api\Controller\AbstractCreateController;
-use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
+use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
 class FishStoreController extends AbstractCreateController
 {
-    use AssertPermissionTrait;
-
     public $serializer = FishSerializer::class;
 
     protected $rounds;
@@ -37,13 +35,13 @@ class FishStoreController extends AbstractCreateController
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $roundId = array_get($request->getQueryParams(), 'id');
+        $roundId = Arr::get($request->getQueryParams(), 'id');
 
         $round = $this->rounds->findOrFail($roundId);
 
-        $this->assertCan($request->getAttribute('actor'), 'createFish', $round);
+        $request->getAttribute('actor')->assertCan('createFish', $round);
 
-        $attributes = array_get($request->getParsedBody(), 'data.attributes', []);
+        $attributes = Arr::get($request->getParsedBody(), 'data.attributes', []);
 
         return $this->fishes->store($round, $attributes);
     }

@@ -14,6 +14,6 @@ return [
         });
     },
     'down' => function (Builder $schema) {
-        $schema->drop('catchthefish_rounds');
+        $schema->dropIfExists('catchthefish_rounds');
     },
 ];

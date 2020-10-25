@@ -17,6 +17,6 @@ return [
         });
     },
     'down' => function (Builder $schema) {
-        $schema->drop('catchthefish_rankings');
+        $schema->dropIfExists('catchthefish_rankings');
     },
 ];

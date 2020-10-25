@@ -7,9 +7,11 @@ use ClarkWinkelmann\CatchTheFish\Fish;
 use ClarkWinkelmann\CatchTheFish\Round;
 use ClarkWinkelmann\CatchTheFish\Validators\FishImageValidator;
 use ClarkWinkelmann\CatchTheFish\Validators\FishValidator;
+use Flarum\Foundation\Paths;
 use Flarum\Locale\Translator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
@@ -26,6 +28,13 @@ class FishRepository
         'pixabay-294469-640.png',
         'pixabay-1331813-640.png',
     ];
+
+    protected $paths;
+
+    public function __construct(Paths $paths)
+    {
+        $this->paths = $paths;
+    }
 
     public function all(Round $round)
     {
@@ -82,7 +91,7 @@ class FishRepository
 
         $validator->assertValid($attributes);
 
-        if (array_has($attributes, 'name')) {
+        if (Arr::has($attributes, 'name')) {
             // Remove the link to the last user who renamed the fish if an admin renames it via the admin panel
             $fish->user_id_last_naming = null;
         }
@@ -101,7 +110,7 @@ class FishRepository
      */
     public function updateImage(Fish $fish, UploadedFileInterface $file): Fish
     {
-        $tmpFile = tempnam(app()->storagePath() . '/tmp', 'catch-the-fish');
+        $tmpFile = tempnam($this->paths->storage . '/tmp', 'catch-the-fish');
         $file->moveTo($tmpFile);
 
         try {
@@ -161,7 +170,7 @@ class FishRepository
         try {
             return collect($files)->map(function (UploadedFileInterface $file, $index) use (&$filesToUnlink, &$originalNames, $validator) {
                 // First we check and load all files
-                $tmpFile = tempnam(app()->storagePath() . '/tmp', 'catch-the-fish');
+                $tmpFile = tempnam($this->paths->storage . '/tmp', 'catch-the-fish');
                 $file->moveTo($tmpFile);
                 $filesToUnlink[] = $tmpFile;
 
@@ -192,7 +201,7 @@ class FishRepository
                 $fish->save();
 
                 return $fish;
-            })->toArray();
+            })->all();
         } finally {
             foreach ($filesToUnlink as $tmpFile) {
                 @unlink($tmpFile);

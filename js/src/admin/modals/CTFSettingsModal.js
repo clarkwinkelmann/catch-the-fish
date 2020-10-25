@@ -56,8 +56,7 @@ export default class CTFSettingsModal extends SettingsModal {
                     onchange: value => {
                         this.setting(settingsPrefix + 'alertRound')(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + 'alert-round'),
-                }),
+                }, app.translator.trans(translationPrefix + 'alert-round')),
             ]),
             m('.Form-group', [
                 Switch.component({
@@ -65,8 +64,7 @@ export default class CTFSettingsModal extends SettingsModal {
                     onchange: value => {
                         this.setting(settingsPrefix + 'animateFlip')(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + 'animate-flip'),
-                }),
+                }, app.translator.trans(translationPrefix + 'animate-flip')),
             ]),
         ];
     }

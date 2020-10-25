@@ -4,8 +4,11 @@ namespace ClarkWinkelmann\CatchTheFish;
 
 use ClarkWinkelmann\CatchTheFish\Controllers;
 use ClarkWinkelmann\CatchTheFish\Extend as CTFExtend;
+use Flarum\Discussion\Discussion;
 use Flarum\Extend;
 use Flarum\Foundation\Application;
+use Flarum\Post\Post;
+use Flarum\User\User;
 use Illuminate\Contracts\Events\Dispatcher;
 
 return [
@@ -33,6 +36,13 @@ return [
         ->post('/catch-the-fish/fishes/{id:[0-9]+}/image', 'catchthefish.api.fishes.image', Controllers\FishImageController::class)
         ->get('/catch-the-fish/rounds/{id:[0-9]+}/rankings', 'catchthefish.api.rankings.index', Controllers\RankingIndexController::class),
     (new Extend\Locales(__DIR__ . '/resources/locale')),
+    (new Extend\Model(Discussion::class))
+        ->relationship('catchTheFishFishes', new ConfigureFishesRelationship('discussion_id_placement')),
+    (new Extend\Model(Post::class))
+        ->relationship('catchTheFishFishes', new ConfigureFishesRelationship('post_id_placement')),
+    (new Extend\Model(User::class))
+        ->relationship('catchTheFishFishes', new ConfigureFishesRelationship('user_id_placement'))
+        ->relationship('catchTheFishBasket', new ConfigureBasketRelationship()),
     new CTFExtend\Policies(),
     new CTFExtend\ForumRelationship(),
     new CTFExtend\ResourceFishRelationship(),

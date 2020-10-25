@@ -9,13 +9,11 @@ use ClarkWinkelmann\CatchTheFish\Validators\FishValidator;
 use Flarum\Foundation\ValidationException;
 use Flarum\Locale\Translator;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\User\AssertPermissionTrait;
 use Flarum\User\User;
+use Illuminate\Support\Arr;
 
 class PlacementRepository
 {
-    use AssertPermissionTrait;
-
     /**
      * @param Fish $fish
      * @param array $placement
@@ -29,7 +27,7 @@ class PlacementRepository
                      'user_id',
                  ] as $key) {
             $value = $fish->{$key . '_placement'};
-            if ($value && $value == array_get($placement, $key)) {
+            if ($value && $value == Arr::get($placement, $key)) {
                 return;
             }
         }
@@ -54,7 +52,7 @@ class PlacementRepository
      */
     public function catch(User $actor, Fish $fish, array $placement): Fish
     {
-        $this->assertCan($actor, 'catch', $fish);
+        $actor->assertCan('catch', $fish);
 
         $this->assertFishIsAtPlacement($fish, $placement);
 
@@ -112,14 +110,14 @@ class PlacementRepository
         // Need to clone fish otherwise policy checks in second block are impacted by the changes in first block
         $fishBeforeUpdate = clone $fish;
 
-        if (array_has($attributes, 'placement')) {
-            $this->assertCan($actor, 'place', $fishBeforeUpdate);
+        if (Arr::has($attributes, 'placement')) {
+            $actor->assertCan('place', $fishBeforeUpdate);
 
-            if (array_get($attributes, 'placement') !== 'random') {
+            if (Arr::get($attributes, 'placement') !== 'random') {
                 $placement = new Placement();
-                $placement->discussionId = array_get($attributes, 'placement.discussion_id');
-                $placement->postId = array_get($attributes, 'placement.post_id');
-                $placement->userId = array_get($attributes, 'placement.user_id');
+                $placement->discussionId = Arr::get($attributes, 'placement.discussion_id');
+                $placement->postId = Arr::get($attributes, 'placement.post_id');
+                $placement->userId = Arr::get($attributes, 'placement.user_id');
 
                 $placement->assertValid();
 
@@ -131,8 +129,8 @@ class PlacementRepository
             $fish->placement_valid_since = Carbon::now();
         }
 
-        if (array_has($attributes, 'name')) {
-            $this->assertCan($actor, 'name', $fishBeforeUpdate);
+        if (Arr::has($attributes, 'name')) {
+            $actor->assertCan('name', $fishBeforeUpdate);
 
             /**
              * @var $validator FishValidator
@@ -140,7 +138,7 @@ class PlacementRepository
             $validator = app(FishValidator::class);
             $validator->assertValid($attributes);
 
-            $fish->name = array_get($attributes, 'name');
+            $fish->name = Arr::get($attributes, 'name');
             $fish->lastUserNaming()->associate($actor);
 
             // If the user can only rename fishes, after rename we immediately release the fish

@@ -4,7 +4,6 @@ namespace ClarkWinkelmann\CatchTheFish\Controllers;
 
 use ClarkWinkelmann\CatchTheFish\Repositories\RoundRepository;
 use Flarum\Api\Controller\AbstractDeleteController;
-use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
@@ -12,8 +11,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RoundDeleteController extends AbstractDeleteController
 {
-    use AssertPermissionTrait;
-
     protected $rounds;
 
     public function __construct(RoundRepository $rounds)
@@ -33,7 +30,7 @@ class RoundDeleteController extends AbstractDeleteController
 
         $round = $this->rounds->findOrFail($id);
 
-        $this->assertCan($request->getAttribute('actor'), 'delete', $round);
+        $request->getAttribute('actor')->assertCan('delete', $round);
 
         $this->rounds->delete($round);
     }

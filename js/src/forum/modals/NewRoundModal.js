@@ -2,6 +2,8 @@ import app from 'flarum/app';
 import Modal from 'flarum/components/Modal';
 import EditRound from '../components/EditRound';
 
+/* global m */
+
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.new-round-modal.';
 
 export default class NewRoundModal extends Modal {
@@ -14,16 +16,14 @@ export default class NewRoundModal extends Modal {
     }
 
     content() {
-        return m('.Modal-body', [
-            EditRound.component({
-                onsave: () => {
-                    this.hide();
+        return m('.Modal-body', m(EditRound, {
+            onsave: () => {
+                this.hide();
 
-                    if (this.props.oncreateordelete) {
-                        this.props.oncreateordelete();
-                    }
-                },
-            }),
-        ]);
+                if (this.attrs.oncreateordelete) {
+                    this.attrs.oncreateordelete();
+                }
+            },
+        }));
     }
 }

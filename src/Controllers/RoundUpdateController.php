@@ -6,17 +6,15 @@ use ClarkWinkelmann\CatchTheFish\Repositories\RoundRepository;
 use ClarkWinkelmann\CatchTheFish\Round;
 use ClarkWinkelmann\CatchTheFish\Serializers\RoundSerializer;
 use Flarum\Api\Controller\AbstractShowController;
-use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
 class RoundUpdateController extends AbstractShowController
 {
-    use AssertPermissionTrait;
-
     public $serializer = RoundSerializer::class;
 
     protected $rounds;
@@ -36,13 +34,13 @@ class RoundUpdateController extends AbstractShowController
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $id = array_get($request->getQueryParams(), 'id');
+        $id = Arr::get($request->getQueryParams(), 'id');
 
         $round = $this->rounds->findOrFail($id);
 
-        $this->assertCan($request->getAttribute('actor'), 'update', $round);
+        $request->getAttribute('actor')->assertCan('update', $round);
 
-        $attributes = array_get($request->getParsedBody(), 'data.attributes', []);
+        $attributes = Arr::get($request->getParsedBody(), 'data.attributes', []);
 
         return $this->rounds->update($round, $attributes);
     }

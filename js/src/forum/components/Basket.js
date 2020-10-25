@@ -1,12 +1,11 @@
 import app from 'flarum/app';
-import Component from 'flarum/Component';
 import FishImage from './FishImage';
 
-/* global m, moment */
+/* global m, dayjs */
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.basket.';
 
-export default class Basket extends Component {
+export default class Basket {
     view() {
         if (!app.session.user) {
             return m('div');
@@ -33,11 +32,11 @@ export default class Basket extends Component {
                     ondragstart(event) {
                         event.dataTransfer.setData('text/plain', 'fish:' + fish.id());
                     },
-                }, FishImage.component({
+                }, m(FishImage, {
                     fish,
                 })),
                 m('.catchthefish-basket-time', app.translator.trans(translationPrefix + 'time', {
-                    time: moment(fish.placeUntil()).fromNow(),
+                    time: dayjs(fish.placeUntil()).fromNow(),
                 })),
             ])),
         ]);

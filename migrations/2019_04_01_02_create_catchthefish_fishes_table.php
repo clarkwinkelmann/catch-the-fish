@@ -30,6 +30,6 @@ return [
         });
     },
     'down' => function (Builder $schema) {
-        $schema->drop('catchthefish_fishes');
+        $schema->dropIfExists('catchthefish_fishes');
     },
 ];

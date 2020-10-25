@@ -1,34 +1,31 @@
 import app from 'flarum/app';
-import Page from 'flarum/components/Page';
 import User from "./User";
 
 /* global m */
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-ranking.';
 
-export default class RoundRankings extends Page {
-    init() {
-        super.init();
-
+export default class RoundRankings {
+    oninit(vnode) {
         this.rankings = null;
 
         app.request({
             method: 'GET',
-            url: app.forum.attribute('apiUrl') + '/catch-the-fish/rounds/' + this.props.round.id() + '/rankings',
+            url: app.forum.attribute('apiUrl') + '/catch-the-fish/rounds/' + vnode.attrs.round.id() + '/rankings',
         }).then(result => {
             this.rankings = app.store.pushPayload(result);
             m.redraw();
         });
     }
 
-    view() {
+    view(vnode) {
         if (this.rankings === null) {
             return m('p', app.translator.trans(translationPrefix + 'loading'));
         }
 
         return m('div', [
             m('h2', app.translator.trans(translationPrefix + 'title', {
-                name: this.props.round.name(),
+                name: vnode.attrs.round.name(),
             })),
             m('table.catchthefish-table', [
                 m('thead', m('tr', [
@@ -39,7 +36,7 @@ export default class RoundRankings extends Page {
                 m('tbody', this.rankings.map((ranking, index) => m('tr', [
                     m('td', '#' + (index + 1)),
                     m('td', ranking.catch_count()),
-                    m('td', User.component({
+                    m('td', m(User, {
                         user: ranking.user(),
                     })),
                 ]))),
