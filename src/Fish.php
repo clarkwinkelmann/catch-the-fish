@@ -96,7 +96,7 @@ class Fish extends AbstractModel
             /**
              * @var $generator UrlGenerator
              */
-            $generator = app(UrlGenerator::class);
+            $generator = resolve(UrlGenerator::class);
 
             return $generator->to('forum')->path('assets/catch-the-fish/' . $this->image);
         }

@@ -1,6 +1,6 @@
 import app from 'flarum/app';
-import Modal from 'flarum/components/Modal';
-import Button from 'flarum/components/Button';
+import Modal from 'flarum/common/components/Modal';
+import Button from 'flarum/common/components/Button';
 import FishImage from '../components/FishImage';
 import User from "../components/User";
 
@@ -103,10 +103,10 @@ export default class CaughtFishModal extends Modal {
                 m('label', app.translator.trans(translationPrefix + 'name')),
                 m('input.FormControl', {
                     value: this.newName,
-                    oninput: m.withAttr('value', value => {
-                        this.newName = value;
+                    oninput: event => {
+                        this.newName = event.target.value;
                         this.dirty = true;
-                    }),
+                    },
                 }),
             ]) : null,
             fish.canPlace() ? m('p', app.translator.trans(translationPrefix + 'placement-help')) : null,

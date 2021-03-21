@@ -18,14 +18,16 @@
     ],
     "support": {
         "issues": "https://github.com/clarkwinkelmann/catch-the-fish/issues",
-        "source": "https://github.com/clarkwinkelmann/catch-the-fish"
+        "source": "https://github.com/clarkwinkelmann/catch-the-fish",
+        "forum": "https://discuss.flarum.org/d/19532"
     },
     "require": {
-        "flarum/core": "^0.1.0-beta.14"
+        "flarum/core": "^0.1.0-beta.16"
     },
     "extra": {
         "flarum-extension": {
             "title": "Catch the fish",
+            "category": "feature",
             "icon": {
                 "name": "fas fa-fish",
                 "backgroundColor": "#90d71b",

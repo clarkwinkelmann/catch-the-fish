@@ -1,8 +1,8 @@
 import app from 'flarum/app';
-import Button from 'flarum/components/Button';
-import Switch from 'flarum/components/Switch';
-import extractText from 'flarum/utils/extractText';
-import withAttr from 'flarum/utils/withAttr';
+import Button from 'flarum/common/components/Button';
+import Switch from 'flarum/common/components/Switch';
+import extractText from 'flarum/common/utils/extractText';
+import withAttr from 'flarum/common/utils/withAttr';
 
 /* global m, dayjs */
 

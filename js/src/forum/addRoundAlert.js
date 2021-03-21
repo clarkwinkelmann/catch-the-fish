@@ -1,6 +1,6 @@
-import {override} from 'flarum/extend';
+import {override} from 'flarum/common/extend';
 import app from 'flarum/app';
-import IndexPage from 'flarum/components/IndexPage';
+import IndexPage from 'flarum/forum/components/IndexPage';
 import RoundAlert from './components/RoundAlert';
 
 /* global m */

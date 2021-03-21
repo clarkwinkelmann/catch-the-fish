@@ -1,5 +1,5 @@
 import app from 'flarum/app';
-import extractText from 'flarum/utils/extractText';
+import extractText from 'flarum/common/utils/extractText';
 
 /* global m */
 

@@ -1,5 +1,5 @@
 import app from 'flarum/app';
-import classList from 'flarum/utils/classList';
+import classList from 'flarum/common/utils/classList';
 import FishImage from './FishImage';
 import CaughtFishModal from '../modals/CaughtFishModal';
 

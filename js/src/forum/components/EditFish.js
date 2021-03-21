@@ -1,6 +1,6 @@
 import app from 'flarum/app';
-import Button from 'flarum/components/Button';
-import extractText from 'flarum/utils/extractText';
+import Button from 'flarum/common/components/Button';
+import extractText from 'flarum/common/utils/extractText';
 
 /* global m */
 

@@ -6,13 +6,11 @@ use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Round;
 use Flarum\Foundation\ValidationException;
 use Flarum\Locale\Translator;
-use Flarum\User\AbstractPolicy;
+use Flarum\User\Access\AbstractPolicy;
 use Flarum\User\User;
 
 class RoundPolicy extends AbstractPolicy
 {
-    protected $model = Round::class;
-
     const TRANSLATION_PREFIX = 'clarkwinkelmann-catch-the-fish.api.';
 
     public function list(User $actor)
@@ -41,13 +39,13 @@ class RoundPolicy extends AbstractPolicy
 
         if ($round->starts_at && $round->starts_at->gt($now)) {
             throw new ValidationException([
-                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'round-not-started'),
+                'placement' => resolve(Translator::class)->trans(self::TRANSLATION_PREFIX . 'round-not-started'),
             ]);
         }
 
         if ($round->ends_at->lt($now)) {
             throw new ValidationException([
-                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'round-finished'),
+                'placement' => resolve(Translator::class)->trans(self::TRANSLATION_PREFIX . 'round-finished'),
             ]);
         }
 

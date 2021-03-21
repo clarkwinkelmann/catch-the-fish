@@ -14,6 +14,17 @@ use Illuminate\Support\Arr;
 
 class PlacementRepository
 {
+    protected $settings;
+    protected $validator;
+    protected $translator;
+
+    public function __construct(SettingsRepositoryInterface $settings, FishValidator $validator, Translator $translator)
+    {
+        $this->settings = $settings;
+        $this->validator = $validator;
+        $this->translator = $translator;
+    }
+
     /**
      * @param Fish $fish
      * @param array $placement
@@ -32,13 +43,8 @@ class PlacementRepository
             }
         }
 
-        /**
-         * @var $translator Translator
-         */
-        $translator = app(Translator::class);
-
         throw new ValidationException([
-            'placement' => $translator->trans('clarkwinkelmann-catch-the-fish.api.wrong-catch-placement'),
+            'placement' => $this->translator->trans('clarkwinkelmann-catch-the-fish.api.wrong-catch-placement'),
         ]);
     }
 
@@ -66,11 +72,7 @@ class PlacementRepository
         // Using permission directly instead of policy to not over-complicate time-based conditions
         // In the worst case we block the fish for a few minutes while nobody can edit it
         if ($actor->can('catchthefish.choose-place') || $actor->can('catchthefish.choose-name')) {
-            /**
-             * @var $settings SettingsRepositoryInterface
-             */
-            $settings = app(SettingsRepositoryInterface::class);
-            $placementValidSince->addMinutes($settings->get('catch-the-fish.autoPlacedAfterMinutes', 5));
+            $placementValidSince->addMinutes($this->settings->get('catch-the-fish.autoPlacedAfterMinutes', 5));
         }
 
         $fish->placement_valid_since = $placementValidSince;
@@ -132,11 +134,7 @@ class PlacementRepository
         if (Arr::has($attributes, 'name')) {
             $actor->assertCan('name', $fishBeforeUpdate);
 
-            /**
-             * @var $validator FishValidator
-             */
-            $validator = app(FishValidator::class);
-            $validator->assertValid($attributes);
+            $this->validator->assertValid($attributes);
 
             $fish->name = Arr::get($attributes, 'name');
             $fish->lastUserNaming()->associate($actor);

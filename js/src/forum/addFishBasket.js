@@ -1,5 +1,5 @@
-import {extend} from 'flarum/extend';
-import HeaderPrimary from 'flarum/components/HeaderPrimary';
+import {extend} from 'flarum/common/extend';
+import HeaderPrimary from 'flarum/forum/components/HeaderPrimary';
 import Basket from './components/Basket';
 
 /* global m */

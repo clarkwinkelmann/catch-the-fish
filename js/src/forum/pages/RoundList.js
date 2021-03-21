@@ -1,7 +1,7 @@
 import app from 'flarum/app';
-import Page from 'flarum/components/Page';
-import Button from 'flarum/components/Button';
-import LinkButton from 'flarum/components/LinkButton';
+import Page from 'flarum/common/components/Page';
+import Button from 'flarum/common/components/Button';
+import LinkButton from 'flarum/common/components/LinkButton';
 import NewRoundModal from '../modals/NewRoundModal';
 import EditRoundModal from '../modals/EditRoundModal';
 

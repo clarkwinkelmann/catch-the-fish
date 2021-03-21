@@ -27,6 +27,6 @@ class RankingSerializer extends AbstractSerializer
      */
     public function user($ranking)
     {
-        return $this->buildRelationship($ranking, UserSerializer::class, 'user');
+        return $this->hasOne($ranking, UserSerializer::class, 'user');
     }
 }

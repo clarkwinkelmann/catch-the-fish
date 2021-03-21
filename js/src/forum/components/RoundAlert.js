@@ -1,5 +1,5 @@
 import app from 'flarum/app';
-import LinkButton from 'flarum/components/LinkButton';
+import LinkButton from 'flarum/common/components/LinkButton';
 
 /* global m, dayjs */
 

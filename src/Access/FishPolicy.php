@@ -6,13 +6,11 @@ use Carbon\Carbon;
 use ClarkWinkelmann\CatchTheFish\Fish;
 use Flarum\Foundation\ValidationException;
 use Flarum\Locale\Translator;
-use Flarum\User\AbstractPolicy;
+use Flarum\User\Access\AbstractPolicy;
 use Flarum\User\User;
 
 class FishPolicy extends AbstractPolicy
 {
-    protected $model = Fish::class;
-
     const TRANSLATION_PREFIX = 'clarkwinkelmann-catch-the-fish.api.';
 
     public function create(User $actor)
@@ -39,13 +37,13 @@ class FishPolicy extends AbstractPolicy
     {
         if ($actor->id === $fish->user_id_last_placement) {
             throw new ValidationException([
-                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'cannot-catch-own-fish'),
+                'placement' => resolve(Translator::class)->trans(self::TRANSLATION_PREFIX . 'cannot-catch-own-fish'),
             ]);
         }
 
         if (!$fish->placement_valid_since || $fish->placement_valid_since->gt(Carbon::now())) {
             throw new ValidationException([
-                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'cannot-catch-hold-fish'),
+                'placement' => resolve(Translator::class)->trans(self::TRANSLATION_PREFIX . 'cannot-catch-hold-fish'),
             ]);
         }
 
@@ -56,13 +54,13 @@ class FishPolicy extends AbstractPolicy
     {
         if (!$fish->user_id_last_catch || $fish->user_id_last_catch !== $actor->id) {
             throw new ValidationException([
-                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'fish-update-wrong-user'),
+                'placement' => resolve(Translator::class)->trans(self::TRANSLATION_PREFIX . 'fish-update-wrong-user'),
             ]);
         }
 
         if (!$fish->placement_valid_since || $fish->placement_valid_since->lt(Carbon::now())) {
             throw new ValidationException([
-                'placement' => app(Translator::class)->trans(self::TRANSLATION_PREFIX . 'fish-update-expired'),
+                'placement' => resolve(Translator::class)->trans(self::TRANSLATION_PREFIX . 'fish-update-expired'),
             ]);
         }
 

@@ -13,6 +13,17 @@ use Illuminate\Validation\ValidationException;
 
 class RoundRepository
 {
+    protected $validator;
+    protected $fishRepository;
+    protected $uploader;
+
+    public function __construct(RoundValidator $validator, FishRepository $fishRepository, FishImageUploader $uploader)
+    {
+        $this->validator = $validator;
+        $this->fishRepository = $fishRepository;
+        $this->uploader = $uploader;
+    }
+
     public function all()
     {
         return Round::all();
@@ -59,23 +70,13 @@ class RoundRepository
      */
     public function store(array $attributes): Round
     {
-        /**
-         * @var $validator RoundValidator
-         */
-        $validator = app(RoundValidator::class);
-
-        $validator->assertValid($attributes);
+        $this->validator->assertValid($attributes);
 
         $round = new Round($this->parseAttributes($attributes));
         $round->save();
 
         if (Arr::get($attributes, 'include_starting_pack')) {
-            /**
-             * @var $fishes FishRepository
-             */
-            $fishes = app(FishRepository::class);
-
-            $fishes->storeDefaultData($round);
+            $this->fishRepository->storeDefaultData($round);
         }
 
         return $round;
@@ -89,12 +90,7 @@ class RoundRepository
      */
     public function update(Round $round, array $attributes): Round
     {
-        /**
-         * @var $validator RoundValidator
-         */
-        $validator = app(RoundValidator::class);
-
-        $validator->assertValid($attributes);
+        $this->validator->assertValid($attributes);
 
         $round->fill($this->parseAttributes($attributes));
         $round->save();
@@ -108,12 +104,8 @@ class RoundRepository
      */
     public function delete(Round $round): void
     {
-        /**
-         * @var $uploader FishImageUploader
-         */
-        $uploader = app(FishImageUploader::class);
         foreach ($round->fishes as $fish) {
-            $uploader->remove($fish);
+            $this->uploader->remove($fish);
         }
 
         $round->delete();

@@ -24,17 +24,17 @@ class Placement
 
     protected static function settingDiscussionAgeDays()
     {
-        return app(SettingsRepositoryInterface::class)->get('catch-the-fish.discussionAgeDays', 14);
+        return resolve(SettingsRepositoryInterface::class)->get('catch-the-fish.discussionAgeDays', 14);
     }
 
     protected static function settingPostAgeDays()
     {
-        return app(SettingsRepositoryInterface::class)->get('catch-the-fish.postAgeDays', 14);
+        return resolve(SettingsRepositoryInterface::class)->get('catch-the-fish.postAgeDays', 14);
     }
 
     protected static function settingUserAgeDays()
     {
-        return app(SettingsRepositoryInterface::class)->get('catch-the-fish.userAgeDays', 14);
+        return resolve(SettingsRepositoryInterface::class)->get('catch-the-fish.userAgeDays', 14);
     }
 
     /**
@@ -45,7 +45,7 @@ class Placement
         /**
          * @var $translator Translator
          */
-        $translator = app(Translator::class);
+        $translator = resolve(Translator::class);
 
         // One and only one anchor resource must be chosen
         if (!is_null($this->discussionId) + !is_null($this->postId) + !is_null($this->userId) !== 1) {
@@ -95,7 +95,7 @@ class Placement
         }
 
         if ($model instanceof Discussion) {
-            if ($model->last_posted_at->lt(Carbon::now()->subDays(self::settingDiscussionAgeDays()))) {
+            if (is_null($model->last_posted_at) || $model->last_posted_at->lt(Carbon::now()->subDays(self::settingDiscussionAgeDays()))) {
                 throw new ValidationException([
                     'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'inactive-discussion', [
                         '{days}' => self::settingDiscussionAgeDays(),
@@ -117,7 +117,7 @@ class Placement
                 ]);
             }
         } else if ($model instanceof User) {
-            if ($model->last_seen_at->lt(Carbon::now()->subDays(self::settingUserAgeDays()))) {
+            if (is_null($model->last_seen_at) || $model->last_seen_at->lt(Carbon::now()->subDays(self::settingUserAgeDays()))) {
                 throw new ValidationException([
                     'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'inactive-user', [
                         '{days}' => self::settingUserAgeDays(),
@@ -128,7 +128,7 @@ class Placement
             /**
              * @var $extensions ExtensionManager
              */
-            $extensions = app(ExtensionManager::class);
+            $extensions = resolve(ExtensionManager::class);
 
             if ($extensions->isEnabled('flarum-suspend') && !is_null($model->suspended_until) && $model->suspended_until->gt(Carbon::now())) {
                 throw new ValidationException([
@@ -150,7 +150,7 @@ class Placement
         /**
          * @var $extensions ExtensionManager
          */
-        $extensions = app(ExtensionManager::class);
+        $extensions = resolve(ExtensionManager::class);
 
         if ($extensions->isEnabled('flarum-suspend')) {
             $query->whereNull('suspended_until');
@@ -208,7 +208,7 @@ class Placement
             /**
              * @var $translator Translator
              */
-            $translator = app(Translator::class);
+            $translator = resolve(Translator::class);
 
             throw new ValidationException([
                 'placement' => $translator->trans(self::TRANSLATION_PREFIX . 'random-error'),

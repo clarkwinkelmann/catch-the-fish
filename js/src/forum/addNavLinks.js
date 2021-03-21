@@ -1,7 +1,7 @@
-import {extend} from 'flarum/extend';
+import {extend} from 'flarum/common/extend';
 import app from 'flarum/app';
-import IndexPage from 'flarum/components/IndexPage';
-import LinkButton from 'flarum/components/LinkButton';
+import IndexPage from 'flarum/forum/components/IndexPage';
+import LinkButton from 'flarum/common/components/LinkButton';
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.nav.';
 

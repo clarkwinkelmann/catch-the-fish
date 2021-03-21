@@ -1,5 +1,5 @@
 import app from 'flarum/app';
-import Page from 'flarum/components/Page';
+import Page from 'flarum/common/components/Page';
 import RoundRankings from "../components/RoundRankings";
 
 /* global m */

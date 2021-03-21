@@ -1,8 +1,8 @@
-import {extend, override} from 'flarum/extend';
+import {extend, override} from 'flarum/common/extend';
 import app from 'flarum/app';
-import CommentPost from 'flarum/components/CommentPost';
-import UserCard from 'flarum/components/UserCard';
-import DiscussionHero from 'flarum/components/DiscussionHero';
+import CommentPost from 'flarum/forum/components/CommentPost';
+import UserCard from 'flarum/forum/components/UserCard';
+import DiscussionHero from 'flarum/forum/components/DiscussionHero';
 import DropArea from './components/DropArea';
 import MovingFish from './components/MovingFish';
 

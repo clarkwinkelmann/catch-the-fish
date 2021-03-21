@@ -1,4 +1,4 @@
-import Model from 'flarum/Model';
+import Model from 'flarum/common/Model';
 
 export default class Fish extends Model {
     round_id = Model.attribute('round_id'); // Just for the creation apiEndpoint creation

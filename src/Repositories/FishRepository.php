@@ -30,10 +30,18 @@ class FishRepository
     ];
 
     protected $paths;
+    protected $validator;
+    protected $imageValidator;
+    protected $uploader;
+    protected $translator;
 
-    public function __construct(Paths $paths)
+    public function __construct(Paths $paths, FishValidator $validator, FishImageValidator $imageValidator, FishImageUploader $uploader, Translator $translator)
     {
         $this->paths = $paths;
+        $this->validator = $validator;
+        $this->imageValidator = $imageValidator;
+        $this->uploader = $uploader;
+        $this->translator = $translator;
     }
 
     public function all(Round $round)
@@ -60,12 +68,7 @@ class FishRepository
      */
     public function store(Round $round, array $attributes): Fish
     {
-        /**
-         * @var $validator FishValidator
-         */
-        $validator = app(FishValidator::class);
-
-        $validator->assertValid($attributes);
+        $this->validator->assertValid($attributes);
 
         $fish = new Fish($attributes);
         $fish->round()->associate($round);
@@ -84,12 +87,7 @@ class FishRepository
      */
     public function update(Fish $fish, array $attributes): Fish
     {
-        /**
-         * @var $validator FishValidator
-         */
-        $validator = app(FishValidator::class);
-
-        $validator->assertValid($attributes);
+        $this->validator->assertValid($attributes);
 
         if (Arr::has($attributes, 'name')) {
             // Remove the link to the last user who renamed the fish if an admin renames it via the admin panel
@@ -118,25 +116,15 @@ class FishRepository
                 $tmpFile,
                 $file->getClientFilename(),
                 $file->getClientMediaType(),
-                $file->getSize(),
                 $file->getError(),
                 true
             );
 
-            /**
-             * @var $validator FishImageValidator
-             */
-            $validator = app(FishImageValidator::class);
-
-            $validator->assertValid(['image' => $file]);
+            $this->imageValidator->assertValid(['image' => $file]);
 
             $image = (new ImageManager())->make($tmpFile);
 
-            /**
-             * @var $uploader FishImageUploader
-             */
-            $uploader = app(FishImageUploader::class);
-            $uploader->upload($fish, $image);
+            $this->uploader->upload($fish, $image);
 
             $fish->save();
         } finally {
@@ -155,20 +143,10 @@ class FishRepository
     {
         $filesToUnlink = [];
 
-        /**
-         * @var $validator FishImageValidator
-         */
-        $validator = app(FishImageValidator::class);
-
-        /**
-         * @var $uploader FishImageUploader
-         */
-        $uploader = app(FishImageUploader::class);
-
         $originalNames = [];
 
         try {
-            return collect($files)->map(function (UploadedFileInterface $file, $index) use (&$filesToUnlink, &$originalNames, $validator) {
+            return collect($files)->map(function (UploadedFileInterface $file, $index) use (&$filesToUnlink, &$originalNames) {
                 // First we check and load all files
                 $tmpFile = tempnam($this->paths->storage . '/tmp', 'catch-the-fish');
                 $file->moveTo($tmpFile);
@@ -180,19 +158,18 @@ class FishRepository
                     $tmpFile,
                     $file->getClientFilename(),
                     $file->getClientMediaType(),
-                    $file->getSize(),
                     $file->getError(),
                     true
                 );
 
-                $validator->assertValid(['image' => $file]);
+                $this->imageValidator->assertValid(['image' => $file]);
 
                 return (new ImageManager())->make($tmpFile);
-            })->map(function (Image $image, $index) use ($originalNames, $round, $uploader) {
+            })->map(function (Image $image, $index) use ($originalNames, $round) {
                 // Then we create the fishes and save the images
                 $fish = new Fish();
 
-                $uploader->upload($fish, $image);
+                $this->uploader->upload($fish, $image);
 
                 $fish->name = explode('.', $originalNames[$index])[0];
                 $fish->round()->associate($round);
@@ -215,11 +192,7 @@ class FishRepository
      */
     public function delete(Fish $fish): void
     {
-        /**
-         * @var $uploader FishImageUploader
-         */
-        $uploader = app(FishImageUploader::class);
-        $uploader->remove($fish);
+        $this->uploader->remove($fish);
 
         $fish->delete();
     }
@@ -230,26 +203,16 @@ class FishRepository
      */
     public function storeDefaultData(Round $round): void
     {
-        /**
-         * @var $uploader FishImageUploader
-         */
-        $uploader = app(FishImageUploader::class);
-
-        /**
-         * @var $translator Translator
-         */
-        $translator = app(Translator::class);
-
         $now = Carbon::now();
 
         foreach (self::BASE_IMAGES as $index => $originalImagePath) {
             $fish = new Fish();
 
             $image = (new ImageManager())->make(__DIR__ . '/../../resources/images/' . $originalImagePath);
-            $uploader->upload($fish, $image);
+            $this->uploader->upload($fish, $image);
 
             $fish->round_id = $round->id;
-            $fish->name = $translator->trans('clarkwinkelmann-catch-the-fish.api.default-fish-name', [
+            $fish->name = $this->translator->trans('clarkwinkelmann-catch-the-fish.api.default-fish-name', [
                 '{number}' => $index + 1,
             ]);
             Placement::random()->assign($fish);

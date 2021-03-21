@@ -1,5 +1,5 @@
 import app from 'flarum/app';
-import Modal from 'flarum/components/Modal';
+import Modal from 'flarum/common/components/Modal';
 import EditFish from '../components/EditFish';
 
 /* global m */

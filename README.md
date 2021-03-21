@@ -12,7 +12,7 @@ You can let users change the fish names or choose the placement of the fish them
 
 All aspects of the game are controlled via Flarum permissions.
 
-The extensions comes with a starting pack of (public domain image) fishes that you can include when creating a new round.
+The extension comes with a starting pack of (public domain image) fish that you can include when creating a new round.
 
 ## Installation
 
