@@ -1,16 +1,18 @@
-import app from 'flarum/app';
+import {Vnode} from 'mithril';
+import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
 import Button from 'flarum/common/components/Button';
 import LinkButton from 'flarum/common/components/LinkButton';
 import NewRoundModal from '../modals/NewRoundModal';
 import EditRoundModal from '../modals/EditRoundModal';
-
-/* global m */
+import Round from '../models/Round';
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-round.';
 
 export default class RoundList extends Page {
-    oninit(vnode) {
+    rounds: Round[] | null = null
+
+    oninit(vnode: Vnode) {
         super.oninit(vnode);
 
         this.refreshRounds();

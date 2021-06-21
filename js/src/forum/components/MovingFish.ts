@@ -1,17 +1,25 @@
-import app from 'flarum/app';
+import {ClassComponent, Vnode} from 'mithril';
+import app from 'flarum/forum/app';
 import classList from 'flarum/common/utils/classList';
 import FishImage from './FishImage';
 import CaughtFishModal from '../modals/CaughtFishModal';
+import Fish from '../models/Fish';
 
-/* global m */
+interface MovingFishAttrs {
+    fish: Fish
+    oncatch?: () => void
+}
 
-export default class MovingFish {
-    init() {
+export default class MovingFish implements ClassComponent<MovingFishAttrs> {
+    reverseAnimation!: boolean
+    animationDuration!: string
+
+    oninit() {
         this.reverseAnimation = Math.random() > 0.5;
         this.animationDuration = 5 + (Math.floor(Math.random() * 70) / 10) + 's';
     }
 
-    view(vnode) {
+    view(vnode: Vnode<MovingFishAttrs, this>) {
         const {fish} = vnode.attrs;
 
         return m('.catchthefish-moving-fish', {

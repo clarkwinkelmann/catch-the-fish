@@ -1,8 +1,6 @@
-import app from 'flarum/app';
+import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
 import RoundRankings from "../components/RoundRankings";
-
-/* global m */
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.page-ranking.';
 

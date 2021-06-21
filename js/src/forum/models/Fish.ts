@@ -1,4 +1,5 @@
 import Model from 'flarum/common/Model';
+import User from 'flarum/common/models/User';
 
 export default class Fish extends Model {
     round_id = Model.attribute('round_id'); // Just for the creation apiEndpoint creation
@@ -10,8 +11,8 @@ export default class Fish extends Model {
     canName = Model.attribute('canName');
     canPlace = Model.attribute('canPlace');
     placeUntil = Model.attribute('placeUntil');
-    namedBy = Model.hasOne('lastUserNaming');
-    placedBy = Model.hasOne('lastUserPlacement');
+    namedBy: () => User | false = Model.hasOne('lastUserNaming');
+    placedBy: () => User | false = Model.hasOne('lastUserPlacement');
     round = Model.hasOne('round');
 
     apiEndpoint() {

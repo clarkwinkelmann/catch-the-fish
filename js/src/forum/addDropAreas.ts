@@ -1,14 +1,17 @@
 import {extend, override} from 'flarum/common/extend';
-import app from 'flarum/app';
+import app from 'flarum/forum/app';
+import ItemList from 'flarum/common/utils/ItemList';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import UserCard from 'flarum/forum/components/UserCard';
 import DiscussionHero from 'flarum/forum/components/DiscussionHero';
 import DropArea from './components/DropArea';
 import MovingFish from './components/MovingFish';
 
-/* global m */
+function fishIdFromEvent(event: DragEvent): string | null {
+    if (!event.dataTransfer) {
+        return null;
+    }
 
-function fishIdFromEvent(event) {
     const data = event.dataTransfer.getData("text/plain");
 
     const match = /^fish:([0-9]+)$/.exec(data);
@@ -16,7 +19,7 @@ function fishIdFromEvent(event) {
     return match ? match[1] : null;
 }
 
-function movingFishContent(dragover, model) {
+function movingFishContent(dragover: boolean, model) {
     const content = [];
 
     if (dragover) {
@@ -100,13 +103,13 @@ function addDropAttrs(attrs, modelProperty) {
     };
 }
 
-function addAreaToComponent(component, viewName, modelProperty) {
+function addAreaToComponent(component: any, viewName: string, modelProperty: string) {
     if (viewName === 'content') {
         override(component, viewName, function (content) {
             return content().concat(movingFishContent(this.fishDragOver, this.attrs[modelProperty]));
         });
     } else {
-        extend(component, viewName, function (items) {
+        extend(component, viewName, function (items: ItemList) {
             items.add('catchthefish-fish-and-drop', movingFishContent(this.fishDragOver, this.attrs[modelProperty]));
         });
     }

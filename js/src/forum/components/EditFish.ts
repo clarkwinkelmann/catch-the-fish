@@ -1,30 +1,41 @@
-import app from 'flarum/app';
+import {ClassComponent, Vnode} from 'mithril';
+import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import extractText from 'flarum/common/utils/extractText';
-
-/* global m */
+import Fish from '../models/Fish';
+import Round from '../models/Round';
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.edit-fish.';
 
-export default class EditFish {
-    oninit(vnode) {
-        this.fish = vnode.attrs.fish;
-        this.dirty = false;
-        this.processing = false;
+interface EditFishAttrs {
+    fish?: Fish
+    round: Round
+    onsave?: () => void
+    ondelete?: () => void
+}
 
-        if (typeof this.fish === 'undefined') {
-            this.fish = app.store.createRecord('catchthefish-fishes', {
+export default class EditFish implements ClassComponent<EditFishAttrs> {
+    fish!: Fish
+    dirty: boolean = false
+    processing: boolean = false
+
+    oninit(vnode: Vnode<EditFishAttrs, this>) {
+        let {fish} = vnode.attrs;
+        if (typeof fish === 'undefined') {
+            fish = app.store.createRecord('catchthefish-fishes', {
                 attributes: {
                     round_id: vnode.attrs.round.id(),
                     name: '',
                 },
-            });
+            }) as Fish;
         }
+
+        this.fish = fish;
     }
 
-    view(vnode) {
+    view(vnode: Vnode<EditFishAttrs, this>) {
         return m('form', {
-            onsubmit: event => {
+            onsubmit: (event: Event) => {
                 event.preventDefault();
                 this.saveRecord(vnode);
             },
@@ -33,9 +44,9 @@ export default class EditFish {
                 m('label', app.translator.trans(translationPrefix + 'name')),
                 m('input.FormControl', {
                     value: this.fish.name(),
-                    oninput: event => {
+                    oninput: (event: Event) => {
                         this.fish.pushAttributes({
-                            name: event.target.value,
+                            name: (event.target as HTMLInputElement).value,
                         });
 
                         this.dirty = true;
@@ -70,7 +81,7 @@ export default class EditFish {
         return this.dirty;
     }
 
-    saveRecord(vnode) {
+    saveRecord(vnode: Vnode<EditFishAttrs, this>) {
         this.processing = true;
 
         this.fish.save(this.fish.data.attributes).then(() => {
@@ -88,7 +99,7 @@ export default class EditFish {
         });
     }
 
-    deleteRecord(vnode) {
+    deleteRecord(vnode: Vnode<EditFishAttrs, this>) {
         if (!confirm(extractText(app.translator.trans(translationPrefix + 'delete-confirmation', {
             name: this.fish.name(),
         })))) {

@@ -1,12 +1,10 @@
 import {override} from 'flarum/common/extend';
-import app from 'flarum/app';
+import app from 'flarum/forum/app';
 import IndexPage from 'flarum/forum/components/IndexPage';
 import RoundAlert from './components/RoundAlert';
 
-/* global m */
-
 export default function () {
-    override(IndexPage.prototype, 'hero', function (original) {
+    override(IndexPage.prototype, 'hero', function (original: any) {
         const existing = original();
 
         const rounds = app.forum.catchTheFishActiveRounds();

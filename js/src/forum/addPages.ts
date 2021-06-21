@@ -1,4 +1,4 @@
-import app from 'flarum/app';
+import app from 'flarum/forum/app';
 import Rankings from "./pages/Rankings";
 import RoundList from './pages/RoundList';
 import RoundSettings from './pages/RoundSettings';

@@ -1,14 +1,19 @@
-import app from 'flarum/app';
-import User from "./User";
-
-/* global m */
+import {ClassComponent, Vnode} from 'mithril';
+import app from 'flarum/forum/app';
+import User from './User';
+import Ranking from '../models/Ranking';
+import Round from '../models/Round';
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.table-ranking.';
 
-export default class RoundRankings {
-    oninit(vnode) {
-        this.rankings = null;
+interface RoundRankingsAttrs {
+    round: Round
+}
 
+export default class RoundRankings implements ClassComponent<RoundRankingsAttrs> {
+    rankings: Ranking[] | null = null;
+
+    oninit(vnode: Vnode<RoundRankingsAttrs, this>) {
         app.request({
             method: 'GET',
             url: app.forum.attribute('apiUrl') + '/catch-the-fish/rounds/' + vnode.attrs.round.id() + '/rankings',
@@ -18,7 +23,7 @@ export default class RoundRankings {
         });
     }
 
-    view(vnode) {
+    view(vnode: Vnode<RoundRankingsAttrs, this>) {
         if (this.rankings === null) {
             return m('p', app.translator.trans(translationPrefix + 'loading'));
         }

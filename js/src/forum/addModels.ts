@@ -1,11 +1,11 @@
-import app from 'flarum/app';
+import app from 'flarum/forum/app';
 import Model from 'flarum/common/Model';
 import Discussion from 'flarum/common/models/Discussion';
 import Post from 'flarum/common/models/Post';
 import User from 'flarum/common/models/User';
 import Forum from 'flarum/common/models/Forum';
 import Fish from './models/Fish';
-import Ranking from "./models/Ranking";
+import Ranking from './models/Ranking';
 import Round from './models/Round';
 
 export default function () {

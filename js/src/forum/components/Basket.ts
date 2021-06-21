@@ -1,17 +1,17 @@
-import app from 'flarum/app';
+import {ClassComponent} from 'mithril';
+import app from 'flarum/forum/app';
+import User from 'flarum/common/models/User';
 import FishImage from './FishImage';
-
-/* global m, dayjs */
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.basket.';
 
-export default class Basket {
+export default class Basket implements ClassComponent {
     view() {
         if (!app.session.user) {
             return m('div');
         }
 
-        const basket = app.session.user.catchTheFishBasket();
+        const basket = (app.session.user as User).catchTheFishBasket();
 
         if (!basket) {
             return m('div');
@@ -29,7 +29,11 @@ export default class Basket {
             fishesThatCanBePlaced.map(fish => m('.catchthefish-basket-entry', [
                 m('.catchthefish-basket-fish', {
                     draggable: true,
-                    ondragstart(event) {
+                    ondragstart(event: DragEvent) {
+                        if (!event.dataTransfer) {
+                            return;
+                        }
+
                         event.dataTransfer.setData('text/plain', 'fish:' + fish.id());
                     },
                 }, m(FishImage, {

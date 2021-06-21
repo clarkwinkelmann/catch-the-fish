@@ -1,4 +1,4 @@
-import app from 'flarum/app';
+import app from 'flarum/admin/app';
 import settings from './settings';
 
 app.initializers.add('clarkwinkelmann-catch-the-fish', () => {

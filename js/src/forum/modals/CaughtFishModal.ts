@@ -1,20 +1,20 @@
-import app from 'flarum/app';
+import app from 'flarum/forum/app';
 import Modal from 'flarum/common/components/Modal';
 import Button from 'flarum/common/components/Button';
 import FishImage from '../components/FishImage';
 import User from "../components/User";
 
-/* global m */
-
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.caught-fish-modal.';
 
 export default class CaughtFishModal extends Modal {
+    newName!: string
+    dirty: boolean = false
+    loading: boolean = false
+
     oninit(vnode) {
         super.oninit(vnode);
 
         this.newName = this.attrs.fish.name();
-        this.dirty = false;
-        this.loading = false;
     }
 
     className() {
@@ -26,7 +26,7 @@ export default class CaughtFishModal extends Modal {
     }
 
     saveNameAndPlacement(randomPlacement = false) {
-        const body = {};
+        const body: any = {};
 
         if (this.dirty) {
             body.name = this.newName;

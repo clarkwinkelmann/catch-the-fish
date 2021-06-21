@@ -1,26 +1,21 @@
-import app from 'flarum/app';
+import app from 'flarum/forum/app';
 import Modal from 'flarum/common/components/Modal';
 import EditRound from '../components/EditRound';
 
-/* global m */
+const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.new-round-modal.';
 
-const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.edit-round-modal.';
-
-export default class EditRoundModal extends Modal {
+export default class NewRoundModal extends Modal {
     className() {
         return 'Modal--small';
     }
 
     title() {
-        return app.translator.trans(translationPrefix + 'title', {
-            name: this.attrs.round.name(),
-        });
+        return app.translator.trans(translationPrefix + 'title');
     }
 
     content() {
         return m('.Modal-body', m(EditRound, {
-            round: this.attrs.round,
-            ondelete: () => {
+            onsave: () => {
                 this.hide();
 
                 if (this.attrs.oncreateordelete) {

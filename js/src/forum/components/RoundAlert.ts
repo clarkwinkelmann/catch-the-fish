@@ -1,12 +1,16 @@
-import app from 'flarum/app';
+import {ClassComponent, Vnode} from 'mithril';
+import app from 'flarum/forum/app';
 import LinkButton from 'flarum/common/components/LinkButton';
-
-/* global m, dayjs */
+import Round from '../models/Round';
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.round-alert.';
 
-export default class UpdateAlert {
-    view(vnode) {
+interface UpdateAlertAttrs {
+    round: Round
+}
+
+export default class UpdateAlert implements ClassComponent<UpdateAlertAttrs> {
+    view(vnode: Vnode<UpdateAlertAttrs, this>) {
         return m('.Alert.Alert-info', m('.container', [
             m('span.Alert-body', [
                 app.translator.trans(translationPrefix + 'message', {

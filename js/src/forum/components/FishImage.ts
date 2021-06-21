@@ -1,12 +1,17 @@
-import app from 'flarum/app';
+import {ClassComponent, Vnode} from 'mithril';
+import app from 'flarum/forum/app';
 import extractText from 'flarum/common/utils/extractText';
-
-/* global m */
+import Fish from '../models/Fish';
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.fish-image.';
 
-export default class FishImage {
-    view(vnode) {
+interface FishImageAttrs {
+    fish: Fish
+    animationDuration?: string
+}
+
+export default class FishImage implements ClassComponent<FishImageAttrs> {
+    view(vnode: Vnode<FishImageAttrs, this>) {
         const src = vnode.attrs.fish.image_url();
 
         if (src) {

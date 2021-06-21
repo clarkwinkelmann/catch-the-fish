@@ -1,34 +1,44 @@
-import app from 'flarum/app';
+import {ClassComponent, Vnode} from 'mithril';
+import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import Switch from 'flarum/common/components/Switch';
 import extractText from 'flarum/common/utils/extractText';
 import withAttr from 'flarum/common/utils/withAttr';
-
-/* global m, dayjs */
+import Round from '../models/Round';
 
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.forum.edit-round.';
 
-export default class EditRound {
-    oninit(vnode) {
-        this.round = vnode.attrs.round;
-        this.dirty = false;
-        this.processing = false;
+interface EditRoundAttrs {
+    round?: Round
+    onsave?: () => void
+    ondelete?: () => void
+}
 
-        if (typeof this.round === 'undefined') {
-            this.round = app.store.createRecord('catchthefish-rounds', {
+export default class EditRound implements ClassComponent<EditRoundAttrs> {
+    round!: Round
+    dirty: boolean = false
+    processing: boolean = false
+
+    oninit(vnode: Vnode<EditRoundAttrs, this>) {
+        let {round} = vnode.attrs;
+
+        if (typeof round === 'undefined') {
+            round = app.store.createRecord('catchthefish-rounds', {
                 attributes: {
                     name: '',
                     starts_at: '',
                     ends_at: dayjs().add(1, 'day').toISOString(),
                     include_starting_pack: true,
                 },
-            });
+            }) as Round;
         }
+
+        this.round = round;
     }
 
-    view(vnode) {
+    view(vnode: Vnode<EditRoundAttrs, this>) {
         return m('form', {
-            onsubmit: event => {
+            onsubmit: (event: Event) => {
                 event.preventDefault();
                 this.saveRecord(vnode);
             },
@@ -83,7 +93,7 @@ export default class EditRound {
         ]);
     }
 
-    updateAttribute(attribute, value) {
+    updateAttribute(attribute: string, value: any) {
         this.round.pushAttributes({
             [attribute]: value,
         });
@@ -99,7 +109,7 @@ export default class EditRound {
         return this.dirty;
     }
 
-    saveRecord(vnode) {
+    saveRecord(vnode: Vnode<EditRoundAttrs, this>) {
         this.processing = true;
 
         this.round.save(this.round.data.attributes).then(() => {
@@ -117,7 +127,7 @@ export default class EditRound {
         });
     }
 
-    deleteRecord(vnode) {
+    deleteRecord(vnode: Vnode<EditRoundAttrs, this>) {
         if (!confirm(extractText(app.translator.trans(translationPrefix + 'delete-confirmation', {
             name: this.round.name(),
         })))) {
