@@ -93,6 +93,7 @@ clarkwinkelmann-catch-the-fish:
             name: Name
             user-name: Last named by
             user-place: Last placed by
+            placement: Current location
             actions: Actions
             edit: Edit
             no-user-name: Not renamed
