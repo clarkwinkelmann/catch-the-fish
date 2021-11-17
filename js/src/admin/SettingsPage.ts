@@ -5,7 +5,6 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Select from 'flarum/common/components/Select';
 import Switch from 'flarum/common/components/Switch';
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
-import sortTags from 'flarum/tags/utils/sortTags';
 
 const settingsPrefix = 'catch-the-fish.';
 const translationPrefix = 'clarkwinkelmann-catch-the-fish.admin.settings.';
@@ -167,7 +166,7 @@ export default class SettingsPage extends ExtensionPage {
             '0': app.translator.trans(translationPrefix + 'tags-control.choose'),
         };
 
-        sortTags(app.store.all('tags')).forEach(tag => {
+        flarum.core.compat['tags/utils/sortTags'](app.store.all('tags')).forEach(tag => {
             if (tags.some(t => t.tagId === tag.id())) {
                 return;
             }

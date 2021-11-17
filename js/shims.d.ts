@@ -7,7 +7,12 @@ declare global {
 
     interface FlarumExports {
         extensions: {
-            [id: string]: any,
+            [id: string]: any
+        }
+        core: {
+            compat: {
+                [id: string]: any
+            }
         }
     }
 

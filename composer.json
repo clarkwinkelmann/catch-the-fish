@@ -33,7 +33,11 @@
                 "name": "fas fa-fish",
                 "backgroundColor": "#90d71b",
                 "color": "#166b14"
-            }
+            },
+            "optional-dependencies": [
+                "flarum/suspend",
+                "flarum/tags"
+            ]
         },
         "flagrow": {
             "discuss": "https://discuss.flarum.org/d/19532"
