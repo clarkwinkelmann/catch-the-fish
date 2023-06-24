@@ -53,11 +53,11 @@ class Placement
     {
         $probability = resolve(SettingsRepositoryInterface::class)->get('catch-the-fish.userProbability');
 
-        if (!is_int($probability)) {
+        if (!is_numeric($probability)) {
             return 33;
         }
 
-        return $probability;
+        return intval($probability);
     }
 
     protected static function settingDiscussionTags()
@@ -241,8 +241,6 @@ class Placement
 
     public static function random(): self
     {
-        $rand = random_int(1, 100);
-
         $placement = new self();
 
         if (random_int(0, 99) < self::settingUserProbability()) {
