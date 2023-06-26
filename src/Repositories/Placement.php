@@ -23,25 +23,30 @@ class Placement
 
     const TRANSLATION_PREFIX = 'clarkwinkelmann-catch-the-fish.api.';
 
-    protected static function settingDiscussionAgeDays()
+    protected static function intSettingWithDefault(string $key, int $default): int
     {
-        return resolve(SettingsRepositoryInterface::class)->get('catch-the-fish.discussionAgeDays', 14);
+        $value = resolve(SettingsRepositoryInterface::class)->get("catch-the-fish.$key") ?? '';
+
+        if ($value === '') {
+            return $default;
+        }
+
+        return (int)$value;
     }
 
-    protected static function settingPostAgeDays()
+    protected static function settingDiscussionAgeDays(): int
     {
-        return resolve(SettingsRepositoryInterface::class)->get('catch-the-fish.postAgeDays', 14);
+        return self::intSettingWithDefault('discussionAgeDays', 14);
+    }
+
+    protected static function settingPostAgeDays(): int
+    {
+        return self::intSettingWithDefault('postAgeDays', 14);
     }
 
     protected static function settingPostProbability(): int
     {
-        $probability = resolve(SettingsRepositoryInterface::class)->get('catch-the-fish.postProbability');
-
-        if (!is_int($probability)) {
-            return 50;
-        }
-
-        return $probability;
+        return self::intSettingWithDefault('postProbability', 50);
     }
 
     protected static function settingUserAgeDays()
@@ -51,13 +56,7 @@ class Placement
 
     protected static function settingUserProbability(): int
     {
-        $probability = resolve(SettingsRepositoryInterface::class)->get('catch-the-fish.userProbability');
-
-        if (!is_int($probability)) {
-            return 33;
-        }
-
-        return $probability;
+        return self::intSettingWithDefault('userProbability', 33);
     }
 
     protected static function settingDiscussionTags()
@@ -241,8 +240,6 @@ class Placement
 
     public static function random(): self
     {
-        $rand = random_int(1, 100);
-
         $placement = new self();
 
         if (random_int(0, 99) < self::settingUserProbability()) {
